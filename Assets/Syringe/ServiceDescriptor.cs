@@ -5,9 +5,10 @@ namespace Syringe {
     internal class ServiceDescriptor {
 
         public ServiceLifetime Lifetime { get; }
-        public object Implementation { get; }
+        public object Implementation { get; internal set; }
         public Type ServiceType { get; }
         public Type ImplementationType { get; }
+        public Func<object> GetInstance { get; internal set; }
 
         public ServiceDescriptor(object impl, Type serviceType = null) {
             ImplementationType = ServiceType = impl.GetType();
@@ -23,6 +24,10 @@ namespace Syringe {
             ImplementationType = implementationType;
             Implementation = null;
             Lifetime = ServiceLifetime.Transient;
+        }
+
+        public ServiceDescriptor() {
+
         }
     }
 }

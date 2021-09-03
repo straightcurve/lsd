@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Syringe;
+using System;
 
 public class UnityDIContainerTests
 {
@@ -267,5 +268,24 @@ public class UnityDIContainerTests
         var rnd2 = container.Resolve<IAbstract>();
 
         Assert.AreNotEqual(rnd1.Value, rnd2.AbstractValue);
+    }
+
+    [Test]
+    public void ResolveFromInstanceAsSingletonNonLazy() {
+        var container = new UnityDIContainer();
+
+        container.RegisterSingleton<NoDependencyFactory>();
+
+        var factory = container.Resolve<NoDependencyFactory>();
+        var guid = Guid.NewGuid();
+        var instance = factory.Create();
+        instance.Value = guid;
+
+        container.Register<NoDependencyMono>().FromInstance(instance).AsSingleton().NonLazy();
+
+        var resolved = container.Resolve<NoDependencyMono>();
+
+        Assert.AreEqual(instance.Value, resolved.Value);
+        Assert.AreEqual(instance, resolved);
     }
 }

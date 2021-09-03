@@ -55,12 +55,19 @@ namespace Syringe {
             try {
                 if (descriptor.Implementation != null)
                     return descriptor.Implementation;
+                return descriptor.GetInstance();
             } catch (Exception ex) {
                 Debug.LogError($"{type} | {descriptor.ImplementationType} | {descriptor.Implementation.GetType()}");
                 throw ex;
             }
             
             return Instantiate(descriptor.ImplementationType);
+        }
+
+        internal void RegisterSingleton(Type serviceType, Type implementationType, object implementation)
+        {
+            var descriptor = new ServiceDescriptor(Instantiate(implementationType), serviceType);
+            collection.Add(serviceType, descriptor);
         }
 
         public TService Resolve<TService>() {

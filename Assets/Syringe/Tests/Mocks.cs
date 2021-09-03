@@ -2,6 +2,10 @@ using System;
 using Syringe;
 using UnityEngine;
 
+internal class NoDependencyFactory : BaseFactory<NoDependencyMono> {
+
+}
+
 internal interface IRandomFactory : IFactory<RandomProvider> {
     RandomProvider Create(Guid guid);
 }
@@ -45,7 +49,7 @@ internal class ConcreteDependencyMonoFactory : IFactory<ConcreteDependencyMono>
 }
 
 internal class NoDependencyMono : MonoBehaviour, INone {
-  
+    public Guid Value;
 }
 
 internal class ConcreteDependencyMono : MonoBehaviour, IConcrete {
