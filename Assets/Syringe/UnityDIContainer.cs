@@ -48,7 +48,7 @@ namespace Syringe {
         public class UnityRegistration<TService, TImpl> : Registration<TService, TImpl>, IUnitySourceSelection<TImpl> where TImpl: MonoBehaviour {
             public UnityRegistration(UnityDIContainer container): base(container) {}
 
-            public ILifetimeSelection FromNewComponent() {
+            public ILifetimeSelectionStage FromNewComponent() {
                 var type = typeof(TImpl);
                 Descriptor.GetInstance = () => {
                     var instance = new GameObject().AddComponent(type);
@@ -59,9 +59,9 @@ namespace Syringe {
             }
         }
 
-        public interface IUnitySourceSelection<TImpl> : ISourceSelection<TImpl>
+        public interface IUnitySourceSelection<TImpl> : ISourceSelectionStage<TImpl>
         {
-            ILifetimeSelection FromNewComponent();
+            ILifetimeSelectionStage FromNewComponent();
         }
     }
 }
