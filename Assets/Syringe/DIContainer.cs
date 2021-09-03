@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Syringe {
-    public class DIContainer {
+    public class DIContainer : IContainer {
 
         internal readonly Dictionary<Type, ServiceDescriptor> collection = new Dictionary<Type, ServiceDescriptor>();
         internal DIContainer parent;
@@ -55,12 +55,13 @@ namespace Syringe {
             try {
                 if (descriptor.Implementation != null)
                     return descriptor.Implementation;
-                return descriptor.GetInstance();
+                if (descriptor.GetInstance != null)
+                    return descriptor.GetInstance();
             } catch (Exception ex) {
                 Debug.LogError($"{type} | {descriptor.ImplementationType} | {descriptor.Implementation.GetType()}");
                 throw ex;
             }
-            
+
             return Instantiate(descriptor.ImplementationType);
         }
 
@@ -119,5 +120,123 @@ namespace Syringe {
             collection.Add(serviceType, descriptor);
             return this;
         }
+
+        public ISourceSelection<TImpl> Register<TImpl>()
+        {
+            return new Registration<TImpl, TImpl>(this);
+        }
+
+        public ISourceSelection<TImpl> Register<TService, TImpl>()
+        {
+            return new Registration<TService, TImpl>(this);
+        }
+    }
+
+    public class Registration<TService, TImpl> : ISourceSelection<TImpl>, ILifetimeSelection, IInitializationSelection
+    {
+        internal DIContainer Container { get; }
+        internal ServiceLifetime Lifetime { get; set; }
+        internal TImpl Instance { get; private set; }
+        internal GameObject Prefab { get; private set; }
+        internal ServiceDescriptor Descriptor { get; }
+        internal InstantiationType InstantiationType { get; set; }
+
+        public Registration(DIContainer container) {
+            Container = container;
+            Descriptor = new ServiceDescriptor();
+            Container.collection.Add(typeof(TService), Descriptor);
+        }
+
+        public ILifetimeSelection FromNew()
+        {
+            InstantiationType = InstantiationType.FromNew;
+            Descriptor.GetInstance = new Syringe.FromNewStrategy<TImpl>(Container).Instantiate;
+            return this;
+        }
+
+        public void FromInstance(TImpl instance)
+        {
+            InstantiationType = InstantiationType.FromInstance;
+            Instance = instance;
+            Descriptor.GetInstance = () => Instance;
+        }
+
+        public IInitializationSelection AsSingleton()
+        {
+            Lifetime = ServiceLifetime.Singleton;
+            var fn = Descriptor.GetInstance;
+            Descriptor.GetInstance = () => {
+                if (Descriptor.Implementation == null)
+                    Descriptor.Implementation = fn();
+
+                return Descriptor.Implementation;
+            };
+            return this;
+        }
+
+        public IInitializationSelection AsTransient()
+        {
+            Lifetime = ServiceLifetime.Transient;
+            return this;
+        }
+
+        public void Lazy()
+        {
+            Descriptor.GetInstance = GetInstance(Descriptor.GetInstance, InitializationMethod.Lazy);
+        }
+
+        public void NonLazy()
+        {
+            Descriptor.GetInstance = GetInstance(Descriptor.GetInstance, InitializationMethod.NonLazy);
+        }
+
+        protected Func<object> GetInstance(Func<object> fn, InitializationMethod method) {
+            switch (method) {
+                case InitializationMethod.Lazy:
+                default: {
+                    return fn;
+                }
+
+                case InitializationMethod.NonLazy: {
+                    var instance = fn();
+                    return () => instance;
+                }
+            }
+        }
+    }
+
+    public enum InstantiationType {
+        FromNew,
+        FromInstance,
+    }
+
+    public enum InitializationMethod {
+        Lazy,
+        NonLazy,
+    }
+
+    public interface IContainer {
+        ISourceSelection<TImpl> Register<TImpl>();
+        ISourceSelection<TImpl> Register<TService, TImpl>();
+
+        TService Resolve<TService>();
+        object Resolve(Type serviceType);
+    }
+
+    public interface ISourceSelection<TImpl>
+    {
+        ILifetimeSelection FromNew();
+        void FromInstance(TImpl instance);
+    }
+
+    public interface ILifetimeSelection
+    {
+        IInitializationSelection AsSingleton();
+        IInitializationSelection AsTransient();
+    }
+
+    public interface IInitializationSelection {
+        void Lazy();
+        void NonLazy();
     }
 }

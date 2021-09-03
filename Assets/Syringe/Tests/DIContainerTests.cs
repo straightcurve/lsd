@@ -5,15 +5,6 @@ using Syringe;
 
 public class DIContainerTests
 {
-    internal class RandomProvider : IProvider {
-        private readonly Guid value = Guid.NewGuid();
-        public Guid Value => value;
-    }
-
-    internal interface IProvider {
-        Guid Value { get; }
-    }
-
     internal class ConcreteDependencyService : IConcrete {
 
         [Dependency]
@@ -312,5 +303,76 @@ public class DIContainerTests
         var rnd2 = container.Resolve<IProvider>();
 
         Assert.AreNotEqual(rnd1.Value, rnd2.Value);
+    }
+
+    [Test]
+    public void ResolveFromNewAsSingletonNonLazy() {
+        var container = new DIContainer();
+
+        container.Register<RandomProvider>().FromNew().AsSingleton().NonLazy();
+
+        var resolved1 = container.Resolve<RandomProvider>();
+        var resolved2 = container.Resolve<RandomProvider>();
+
+        Assert.IsNotNull(resolved1);
+        Assert.AreEqual(resolved1, resolved2);
+    }
+
+    [Test]
+    public void ResolveFromNewAsSingletonLazy() {
+        var container = new DIContainer();
+
+        container.Register<RandomProvider>().FromNew().AsSingleton().Lazy();
+
+        var resolved1 = container.Resolve<RandomProvider>();
+        var resolved2 = container.Resolve<RandomProvider>();
+
+        Assert.IsNotNull(resolved1);
+        Assert.AreEqual(resolved1, resolved2);
+    }
+
+    [Test]
+    public void ResolveFromNewAsTransientLazy() {
+        var container = new DIContainer();
+
+        container.Register<RandomProvider>().FromNew().AsTransient().Lazy();
+
+        var resolved1 = container.Resolve<RandomProvider>();
+        var resolved2 = container.Resolve<RandomProvider>();
+
+        Assert.IsNotNull(resolved1);
+        Assert.IsNotNull(resolved2);
+        Assert.AreNotEqual(resolved1, resolved2);
+    }
+
+    [Test]
+    public void ResolveFromNewAsTransientNonLazy() {
+        var container = new DIContainer();
+
+        container.Register<RandomProvider>().FromNew().AsTransient().NonLazy();
+
+        var resolved1 = container.Resolve<RandomProvider>();
+        var resolved2 = container.Resolve<RandomProvider>();
+
+        Assert.IsNotNull(resolved1);
+        Assert.AreEqual(resolved1, resolved2);
+    }
+
+    [Test]
+    public void ResolveFromInstance() {
+        var container = new DIContainer();
+
+        container.RegisterSingleton<RandomFactory>();
+
+        var factory = container.Resolve<RandomFactory>();
+        var guid = Guid.NewGuid();
+        var instance = factory.Create();
+
+        container.Register<RandomProvider>().FromInstance(instance);
+
+        var resolved = container.Resolve<RandomProvider>();
+
+        Assert.AreEqual(instance.Value, resolved.Value);
+        Assert.AreEqual(instance, resolved);
     }
 }
