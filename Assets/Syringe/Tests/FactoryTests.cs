@@ -50,8 +50,8 @@ public class FactoryTests
         var container = new UnityDIContainer(parent);
 
         parent.Register<RandomFactory>().FromNew().AsSingleton();
-        container.Register<DependsOnConcreteFactory>().FromNew().AsSingleton();
-        container.Register<DependsOnConcreteComponent>().FromNew().AsSingleton();
+        container.RegisterComponent<DependsOnConcreteFactory>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<DependsOnConcreteComponent>().FromNewComponent().AsSingleton();
 
         var factory = parent.Resolve<RandomFactory>();
         var dep = container.Resolve<DependsOnConcreteFactory>();

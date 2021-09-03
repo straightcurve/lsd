@@ -1,272 +1,275 @@
-// using NUnit.Framework;
-// using UnityEngine;
-// using UnityEngine.TestTools;
-// using Syringe;
-// using System;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.TestTools;
+using Syringe;
+using System;
 
-// public class UnityDIContainerTests
-// {
-//     [Test]
-//     public void ConcreteSingletonNoDependencyWithInitialValue() {
-//         var container = new UnityDIContainer();
+public class UnityDIContainerTests
+{
+    [Test]
+    public void ResolveConcreteFromNewComponentSingleton() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterSingleton(new GameObject().AddComponent<NoDependencyMono>());
+        container.RegisterComponent<NoDependencyMono>().FromNewComponent().AsSingleton();
 
-//         var rnd1 = container.Resolve<NoDependencyMono>();
-//         var rnd2 = container.Resolve<NoDependencyMono>();
+        var rnd1 = container.Resolve<NoDependencyMono>();
+        var rnd2 = container.Resolve<NoDependencyMono>();
 
-//         Assert.AreEqual(rnd1, rnd2);
-//     }
-
-//     [Test]
-//     public void ConcreteSingletonNoDependencyNonLazy() {
-//         var container = new UnityDIContainer();
-
-//         container.RegisterSingleton<NoDependencyMono>();
-
-//         var rnd1 = container.Resolve<NoDependencyMono>();
-//         var rnd2 = container.Resolve<NoDependencyMono>();
-
-//         Assert.AreEqual(rnd1, rnd2);
-//     }
+        Assert.AreEqual(rnd1.Value, rnd2.Value);
+    }
     
-//     [Test]
-//     public void AbstractSingletonNoDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveAbstractFromNewComponentSingleton() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterSingleton<INone, NoDependencyMono>();
+        container.RegisterComponent<INone, NoDependencyMono>().FromNewComponent().AsSingleton();
 
-//         var rnd1 = container.Resolve<INone>();
-//         var rnd2 = container.Resolve<INone>();
+        var rnd1 = container.Resolve<INone>();
+        var rnd2 = container.Resolve<INone>();
 
-//         Assert.AreEqual(rnd1, rnd2);
-//     }
+        Assert.AreEqual(rnd1.Value, rnd2.Value);
+    }
 
-//     [Test]
-//     public void ConcreteTransientNoDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveConcreteFromInstance() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterTransient<NoDependencyMono>();
+        container.RegisterComponent<NoDependencyMono>().FromInstance(new GameObject().AddComponent<NoDependencyMono>());
 
-//         var rnd1 = container.Resolve<NoDependencyMono>();
-//         var rnd2 = container.Resolve<NoDependencyMono>();
+        var rnd1 = container.Resolve<NoDependencyMono>();
+        var rnd2 = container.Resolve<NoDependencyMono>();
 
-//         Assert.AreNotEqual(rnd1, rnd2);
-//     }
+        Assert.AreEqual(rnd1.Value, rnd2.Value);
+        Assert.AreEqual(rnd1, rnd2);
+    }
 
-//     [Test]
-//     public void AbstractTransientNoDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveAbstractFromInstance() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterTransient<INone, NoDependencyMono>();
+        container.RegisterComponent<INone, NoDependencyMono>().FromInstance(new GameObject().AddComponent<NoDependencyMono>());
 
-//         var rnd1 = container.Resolve<INone>();
-//         var rnd2 = container.Resolve<INone>();
+        var rnd1 = container.Resolve<INone>();
+        var rnd2 = container.Resolve<INone>();
 
-//         Assert.AreNotEqual(rnd1, rnd2);
-//     }
+        Assert.AreEqual(rnd1, rnd2);
+    }
 
-//     [Test]
-//     public void SingletonConcreteSingletonDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveConcreteFromNewComponentTransient() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterSingleton<RandomProvider>();
-//         container.RegisterSingleton<ConcreteDependencyMono>();
+        container.RegisterComponent<NoDependencyMono>().FromNewComponent().AsTransient();
 
-//         var rnd1 = container.Resolve<RandomProvider>();
-//         var rnd2 = container.Resolve<ConcreteDependencyMono>();
+        var rnd1 = container.Resolve<NoDependencyMono>();
+        var rnd2 = container.Resolve<NoDependencyMono>();
 
-//         Assert.IsNotNull(rnd1);
-//         Assert.IsNotNull(rnd2);
-//         Assert.AreEqual(rnd1.Value, rnd2.ConcreteValue);
-//     }
+        Assert.AreNotEqual(rnd1, rnd2);
+    }
 
-//     [Test]
-//     public void SingletonAbstractSingletonDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveAbstractFromNewComponentTransient() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterSingleton<IProvider, RandomProvider>();
-//         container.RegisterSingleton<AbstractDependencyMono>();
+        container.RegisterComponent<INone, NoDependencyMono>().FromNewComponent().AsTransient();
 
-//         var rnd1 = container.Resolve<IProvider>();
-//         var rnd2 = container.Resolve<AbstractDependencyMono>();
+        var rnd1 = container.Resolve<INone>();
+        var rnd2 = container.Resolve<INone>();
 
-//         Assert.IsNotNull(rnd1);
-//         Assert.IsNotNull(rnd2);
-//         Assert.AreEqual(rnd1.Value, rnd2.AbstractValue);
-//     }
+        Assert.AreNotEqual(rnd1, rnd2);
+    }
 
-//     [Test]
-//     public void SingletonConcreteTransientDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveConcreteFromNewSingletonForFromNewComponentSingleton() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterTransient<RandomProvider>();
-//         container.RegisterSingleton<ConcreteDependencyMono>();
+        container.Register<RandomProvider>().FromNew().AsSingleton();
+        container.RegisterComponent<ConcreteDependencyMono>().FromNewComponent().AsSingleton();
 
-//         var rnd1 = container.Resolve<RandomProvider>();
-//         var rnd2 = container.Resolve<ConcreteDependencyMono>();
+        var rnd1 = container.Resolve<RandomProvider>();
+        var rnd2 = container.Resolve<ConcreteDependencyMono>();
 
-//         Assert.IsNotNull(rnd1);
-//         Assert.IsNotNull(rnd2);
-//         Assert.AreNotEqual(rnd1.Value, rnd2.ConcreteValue);
-//     }
+        Assert.AreEqual(rnd1.Value, rnd2.ConcreteValue);
+    }
 
-//     [Test]
-//     public void SingletonAbstractTransientDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveAbstractFromNewSingletonForFromNewComponentSingleton() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterTransient<IProvider, RandomProvider>();
-//         container.RegisterSingleton<AbstractDependencyMono>();
+        container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
+        container.RegisterComponent<AbstractDependencyMono>().FromNewComponent().AsSingleton();
 
-//         var rnd1 = container.Resolve<IProvider>();
-//         var rnd2 = container.Resolve<AbstractDependencyMono>();
+        var rnd1 = container.Resolve<IProvider>();
+        var rnd2 = container.Resolve<AbstractDependencyMono>();
 
-//         Assert.AreNotEqual(rnd1.Value, rnd2.AbstractValue);
-//     }
+        Assert.IsNotNull(rnd1);
+        Assert.IsNotNull(rnd2);
+        Assert.AreEqual(rnd1.Value, rnd2.AbstractValue);
+    }
+
+    [Test]
+    public void ResolveConcreteFromNewTransientForFromNewComponentSingleton() {
+        var container = new UnityDIContainer();
+
+        container.Register<RandomProvider>().FromNew().AsTransient();
+        container.RegisterComponent<ConcreteDependencyMono>().FromNewComponent().AsSingleton();
+
+        var rnd1 = container.Resolve<RandomProvider>();
+        var rnd2 = container.Resolve<ConcreteDependencyMono>();
+
+        Assert.IsNotNull(rnd1);
+        Assert.IsNotNull(rnd2);
+        Assert.AreNotEqual(rnd1.Value, rnd2.ConcreteValue);
+    }
+
+    [Test]
+    public void ResolveAbstractFromNewTransientForFromNewComponentSingleton() {
+        var container = new UnityDIContainer();
+
+        container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
+        container.RegisterComponent<AbstractDependencyMono>().FromNewComponent().AsSingleton();
+
+        var rnd1 = container.Resolve<IProvider>();
+        var rnd2 = container.Resolve<AbstractDependencyMono>();
+
+        Assert.AreNotEqual(rnd1.Value, rnd2.AbstractValue);
+    }
     
-//     [Test]
-//     public void TransientConcreteSingletonDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveConcreteFromNewSingletonForFromNewComponentTransient() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterSingleton<RandomProvider>();
-//         container.RegisterTransient<ConcreteDependencyMono>();
+        container.Register<RandomProvider>().FromNew().AsSingleton();
+        container.RegisterComponent<ConcreteDependencyMono>().FromNewComponent().AsTransient();
 
-//         var rnd1 = container.Resolve<ConcreteDependencyMono>();
-//         var rnd2 = container.Resolve<ConcreteDependencyMono>();
+        var rnd1 = container.Resolve<ConcreteDependencyMono>();
+        var rnd2 = container.Resolve<ConcreteDependencyMono>();
 
-//         Assert.AreEqual(rnd1.ConcreteValue, rnd2.ConcreteValue);
-//         Assert.AreNotEqual(rnd1, rnd2);
-//     }
+        Assert.AreEqual(rnd1.ConcreteValue, rnd2.ConcreteValue);
+        Assert.AreNotEqual(rnd1, rnd2);
+    }
     
-//     [Test]
-//     public void TransientAbstractSingletonDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveAbstractFromNewSingletonForFromNewComponentTransient() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterSingleton<IProvider, RandomProvider>();
-//         container.RegisterTransient<AbstractDependencyMono>();
+        container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
+        container.RegisterComponent<AbstractDependencyMono>().FromNewComponent().AsTransient();
 
-//         var rnd1 = container.Resolve<AbstractDependencyMono>();
-//         var rnd2 = container.Resolve<AbstractDependencyMono>();
+        var rnd1 = container.Resolve<AbstractDependencyMono>();
+        var rnd2 = container.Resolve<AbstractDependencyMono>();
 
-//         Assert.AreEqual(rnd1.AbstractValue, rnd2.AbstractValue);
-//         Assert.AreNotEqual(rnd1, rnd2);
-//     }
+        Assert.AreEqual(rnd1.AbstractValue, rnd2.AbstractValue);
+        Assert.AreNotEqual(rnd1, rnd2);
+    }
 
-//     [Test]
-//     public void TransientConcreteTransientDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveConcreteFromNewTransientForFromNewComponentTransient() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterTransient<RandomProvider>();
-//         container.RegisterTransient<ConcreteDependencyMono>();
+        container.Register<RandomProvider>().FromNew().AsTransient();
+        container.RegisterComponent<ConcreteDependencyMono>().FromNewComponent().AsTransient();
 
-//         var rnd1 = container.Resolve<ConcreteDependencyMono>();
-//         var rnd2 = container.Resolve<ConcreteDependencyMono>();
+        var rnd1 = container.Resolve<ConcreteDependencyMono>();
+        var rnd2 = container.Resolve<ConcreteDependencyMono>();
 
-//         Assert.AreNotEqual(rnd1.ConcreteValue, rnd2.ConcreteValue);
-//         Assert.AreNotEqual(rnd1, rnd2);
-//     }
+        Assert.AreNotEqual(rnd1.ConcreteValue, rnd2.ConcreteValue);
+        Assert.AreNotEqual(rnd1, rnd2);
+    }
 
-//     [Test]
-//     public void TransientAbstractTransientDependency() {
-//         var container = new UnityDIContainer();
+    [Test]
+    public void ResolveAbstractFromNewTransientForFromNewComponentTransient() {
+        var container = new UnityDIContainer();
 
-//         container.RegisterTransient<IProvider, RandomProvider>();
-//         container.RegisterTransient<AbstractDependencyMono>();
+        container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
+        container.RegisterComponent<AbstractDependencyMono>().FromNewComponent().AsTransient();
 
-//         var rnd1 = container.Resolve<AbstractDependencyMono>();
-//         var rnd2 = container.Resolve<AbstractDependencyMono>();
+        var rnd1 = container.Resolve<AbstractDependencyMono>();
+        var rnd2 = container.Resolve<AbstractDependencyMono>();
 
-//         Assert.AreNotEqual(rnd1.AbstractValue, rnd2.AbstractValue);
-//         Assert.AreNotEqual(rnd1, rnd2);
-//     }
+        Assert.AreNotEqual(rnd1.AbstractValue, rnd2.AbstractValue);
+        Assert.AreNotEqual(rnd1, rnd2);
+    }
 
-//     [Test]
-//     public void ResolveConcreteSingletonFromParentContainerWithInitialValue() {
-//         var parent = new UnityDIContainer();
-//         var container = new UnityDIContainer(parent);
+    [Test]
+    public void ResolveConcreteFromInstanceFromParentContainer() {
+        var parent = new UnityDIContainer();
+        var container = new UnityDIContainer(parent);
 
-//         parent.RegisterSingleton(new RandomProvider());
-//         parent.RegisterSingleton<ConcreteDependencyMonoFactory>();
+        parent.Register<RandomProvider>().FromInstance(new RandomProvider());
 
-//         var factory = parent.Resolve<ConcreteDependencyMonoFactory>();
-//         container.RegisterSingleton<ConcreteDependencyMono>(factory.Create());
+        var rnd1 = parent.Resolve<RandomProvider>();
+        var rnd2 = container.Resolve<RandomProvider>();
 
-//         var rnd1 = parent.Resolve<RandomProvider>();
-//         var rnd2 = container.Resolve<ConcreteDependencyMono>();
+        Assert.AreEqual(rnd1.Value, rnd2.Value);
+    }
 
-//         Assert.AreEqual(rnd1.Value, rnd2.ConcreteValue);
-//     }
+    /// <summary>
+    /// TODO: Change these to components
+    /// </summary>
 
-//     [Test]
-//     public void ResolveConcreteSingletonFromParentContainerNonLazy() {
-//         var parent = new UnityDIContainer();
-//         var container = new UnityDIContainer(parent);
+    [Test]
+    public void ResolveConcreteFromNewComponentSingletonFromParentContainer() {
+        var parent = new UnityDIContainer();
+        var container = new UnityDIContainer(parent);
 
-//         parent.RegisterSingleton<RandomProvider>();
-//         container.RegisterSingleton<ConcreteDependencyMono>();
+        parent.Register<RandomProvider>().FromNew().AsSingleton();
 
-//         var rnd1 = parent.Resolve<RandomProvider>();
-//         var rnd2 = container.Resolve<ConcreteDependencyMono>();
+        var rnd1 = parent.Resolve<RandomProvider>();
+        var rnd2 = container.Resolve<RandomProvider>();
 
-//         Assert.AreEqual(rnd1.Value, rnd2.ConcreteValue);
-//     }
+        Assert.AreEqual(rnd1.Value, rnd2.Value);
+    }
 
-//     [Test]
-//     public void ResolveAbstractSingletonFromParentContainerNonLazy() {
-//         var parent = new UnityDIContainer();
-//         var container = new UnityDIContainer(parent);
+    [Test]
+    public void ResolveAbstractFromNewComponentSingletonFromParentContainer() {
+        var parent = new UnityDIContainer();
+        var container = new UnityDIContainer(parent);
 
-//         parent.RegisterSingleton<IProvider, RandomProvider>();
-//         parent.RegisterSingleton<IAbstract, AbstractDependencyMono>();
+        parent.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
 
-//         var rnd1 = parent.Resolve<IProvider>();
-//         var rnd2 = container.Resolve<IAbstract>();
+        var rnd1 = parent.Resolve<IProvider>();
+        var rnd2 = container.Resolve<IProvider>();
 
-//         Assert.AreEqual(rnd1.Value, rnd2.AbstractValue);
-//     }
+        Assert.AreEqual(rnd1.Value, rnd2.Value);
+    }
 
-//     [Test]
-//     public void ResolveAbstractSingletonFromParentContainerWithInitialValue() {
-//         var parent = new UnityDIContainer();
-//         var container = new UnityDIContainer(parent);
+    [Test]
+    public void ResolveAbstractFromInstanceFromParentContainer() {
+        var parent = new UnityDIContainer();
+        var container = new UnityDIContainer(parent);
 
-//         parent.RegisterSingleton<IProvider, RandomProvider>(new RandomProvider());
-//         parent.RegisterSingleton<IFactory<AbstractDependencyMono>, AbstractDependencyMonoFactory>();
+        parent.Register<IProvider, RandomProvider>().FromInstance(new RandomProvider());
 
-//         var factory = parent.Resolve<IFactory<AbstractDependencyMono>>();
-//         container.RegisterSingleton<IAbstract, AbstractDependencyMono>(factory.Create());
+        var rnd1 = parent.Resolve<IProvider>();
+        var rnd2 = container.Resolve<IProvider>();
 
-//         var rnd1 = parent.Resolve<IProvider>();
-//         var rnd2 = container.Resolve<IAbstract>();
+        Assert.AreEqual(rnd1.Value, rnd2.Value);
+    }
 
-//         Assert.AreEqual(rnd1.Value, rnd2.AbstractValue);
-//     }
+    [Test]
+    public void ResolveConcreteFromNewComponentTransientFromParentContainer() {
+        var parent = new UnityDIContainer();
+        var container = new UnityDIContainer(parent);
 
-//     [Test]
-//     public void ResolveConcreteTransientFromParentContainerNonLazy() {
-//         var parent = new UnityDIContainer();
-//         var container = new UnityDIContainer(parent);
+        parent.Register<RandomProvider>().FromNew().AsTransient();
 
-//         parent.RegisterTransient<RandomProvider>();
-//         container.RegisterTransient<ConcreteDependencyMono>();
+        var rnd1 = parent.Resolve<RandomProvider>();
+        var rnd2 = container.Resolve<RandomProvider>();
 
-//         var rnd1 = parent.Resolve<RandomProvider>();
-//         var rnd2 = container.Resolve<ConcreteDependencyMono>();
+        Assert.AreNotEqual(rnd1.Value, rnd2.Value);
+    }
 
-//         Assert.AreNotEqual(rnd1.Value, rnd2.ConcreteValue);
-//     }
+    [Test]
+    public void ResolveAbstractFromNewComponentTransientFromParentContainer() {
+        var parent = new UnityDIContainer();
+        var container = new UnityDIContainer(parent);
 
-//     [Test]
-//     public void ResolveAbstractTransientFromParentContainerNonLazy() {
-//         var parent = new UnityDIContainer();
-//         var container = new UnityDIContainer(parent);
+        parent.Register<IProvider, RandomProvider>().FromNew().AsTransient();
 
-//         parent.RegisterTransient<IProvider, RandomProvider>();
-//         container.RegisterTransient<IAbstract, AbstractDependencyMono>();
+        var rnd1 = parent.Resolve<IProvider>();
+        var rnd2 = container.Resolve<IProvider>();
 
-//         var rnd1 = parent.Resolve<IProvider>();
-//         var rnd2 = container.Resolve<IAbstract>();
-
-//         Assert.AreNotEqual(rnd1.Value, rnd2.AbstractValue);
-//     }
-// }
+        Assert.AreNotEqual(rnd1.Value, rnd2.Value);
+    }
+}

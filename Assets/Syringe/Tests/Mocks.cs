@@ -49,7 +49,7 @@ internal class ConcreteDependencyMonoFactory : IFactory<ConcreteDependencyMono>
 }
 
 internal class NoDependencyMono : MonoBehaviour, INone {
-    public Guid Value;
+    public Guid Value { get; set; }
 }
 
 internal class ConcreteDependencyMono : MonoBehaviour, IConcrete {
@@ -102,5 +102,5 @@ internal interface IBoth : IConcrete, IAbstract { }
 
 internal interface INone
 {
-    
+    Guid Value { get; }
 }

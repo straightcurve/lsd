@@ -34,5 +34,34 @@ namespace Syringe {
 
             return base.Instantiate(type);
         }
+
+        public IUnitySourceSelection<TImpl> RegisterComponent<TImpl>() where TImpl : MonoBehaviour
+        {
+            return new UnityRegistration<TImpl, TImpl>(this);
+        }
+
+        public IUnitySourceSelection<TImpl> RegisterComponent<TService, TImpl>() where TImpl : MonoBehaviour
+        {
+            return new UnityRegistration<TService, TImpl>(this);
+        }
+
+        public class UnityRegistration<TService, TImpl> : Registration<TService, TImpl>, IUnitySourceSelection<TImpl> where TImpl: MonoBehaviour {
+            public UnityRegistration(UnityDIContainer container): base(container) {}
+
+            public ILifetimeSelection FromNewComponent() {
+                var type = typeof(TImpl);
+                Descriptor.GetInstance = () => {
+                    var instance = new GameObject().AddComponent(type);
+                    Container.Inject(instance);
+                    return instance;
+                };
+                return this;
+            }
+        }
+
+        public interface IUnitySourceSelection<TImpl> : ISourceSelection<TImpl>
+        {
+            ILifetimeSelection FromNewComponent();
+        }
     }
 }

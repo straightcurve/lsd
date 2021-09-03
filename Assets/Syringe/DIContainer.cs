@@ -137,6 +137,24 @@ namespace Syringe {
         {
             return new Registration<TService, TImpl>(this);
         }
+
+        internal virtual void Inject(object instance) {
+            var type = instance.GetType();
+            var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(f => f.GetCustomAttributes(typeof(DependencyAttribute), false).Length > 0)
+                .ToList();
+
+            var derivedType = type.BaseType;
+            while (derivedType != null) {
+                derivedType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(f => f.GetCustomAttributes(typeof(DependencyAttribute), false).Length > 0)
+                    .ToList().ForEach(f => fields.Add(f));
+                derivedType = derivedType.BaseType;
+            }
+
+            foreach (var field in fields)
+                field.SetValue(instance, Resolve(field.FieldType));
+        }
     }
 
     public class Registration<TService, TImpl> : ISourceSelection<TImpl>, ILifetimeSelection, IInitializationSelection
@@ -146,7 +164,6 @@ namespace Syringe {
         internal TImpl Instance { get; private set; }
         internal GameObject Prefab { get; private set; }
         internal ServiceDescriptor Descriptor { get; }
-        internal InstantiationType InstantiationType { get; set; }
 
         public Registration(DIContainer container) {
             Container = container;
@@ -156,14 +173,18 @@ namespace Syringe {
 
         public ILifetimeSelection FromNew()
         {
-            InstantiationType = InstantiationType.FromNew;
-            Descriptor.GetInstance = new Syringe.FromNewStrategy<TImpl>(Container).Instantiate;
+            Descriptor.GetInstance = () => {
+                var instance = Activator.CreateInstance<TImpl>();
+
+                Container.Inject(instance);
+
+                return instance;
+            };
             return this;
         }
 
         public void FromInstance(TImpl instance)
         {
-            InstantiationType = InstantiationType.FromInstance;
             Instance = instance;
             Descriptor.GetInstance = () => Instance;
         }
@@ -210,11 +231,6 @@ namespace Syringe {
                 }
             }
         }
-    }
-
-    public enum InstantiationType {
-        FromNew,
-        FromInstance,
     }
 
     public enum InitializationMethod {
