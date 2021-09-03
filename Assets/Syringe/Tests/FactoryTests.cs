@@ -6,10 +6,10 @@ using Syringe;
 public class FactoryTests
 {
     [Test]
-    public void ConcreteFactory() {
+    public void ResolveConcreteFromNewSingleton() {
         var parent = new DIContainer();
 
-        parent.RegisterSingleton<RandomFactory>();
+        parent.Register<RandomFactory>().FromNew().AsSingleton();
 
         var factory = parent.Resolve<RandomFactory>();
 
@@ -19,10 +19,10 @@ public class FactoryTests
     }
 
     [Test]
-    public void AbstractFactory() {
+    public void ResolveAbstractFromNewSingleton() {
         var parent = new DIContainer();
 
-        parent.RegisterSingleton<IFactory<RandomProvider>, RandomFactory>();
+        parent.Register<IFactory<RandomProvider>, RandomFactory>().FromNew().AsSingleton();
 
         var factory = parent.Resolve<IFactory<RandomProvider>>();
 
@@ -32,10 +32,10 @@ public class FactoryTests
     }
 
     [Test]
-    public void CustomAbstractFactory() {
+    public void ResolveCustomAbstractFromNewSingleton() {
         var parent = new DIContainer();
 
-        parent.RegisterSingleton<IRandomFactory, RandomFactory>();
+        parent.Register<IRandomFactory, RandomFactory>().FromNew().AsSingleton();
 
         var factory = parent.Resolve<IRandomFactory>();
 
@@ -45,13 +45,13 @@ public class FactoryTests
     }
 
     [Test]
-    public void ResolveBaseFactoryInDependency() {
+    public void ResolveConcreteFromNewSingletonInDependency() {
         var parent = new UnityDIContainer();
         var container = new UnityDIContainer(parent);
 
-        parent.RegisterSingleton<RandomFactory>();
-        container.RegisterSingleton<DependsOnConcreteFactory>();
-        container.RegisterSingleton<DependsOnConcreteComponent>();
+        parent.Register<RandomFactory>().FromNew().AsSingleton();
+        container.Register<DependsOnConcreteFactory>().FromNew().AsSingleton();
+        container.Register<DependsOnConcreteComponent>().FromNew().AsSingleton();
 
         var factory = parent.Resolve<RandomFactory>();
         var dep = container.Resolve<DependsOnConcreteFactory>();

@@ -14,7 +14,7 @@ namespace Syringe {
         public DIContainer(DIContainer _parent) {
             this.parent = _parent;
 
-            RegisterSingleton<DIContainer>(this);
+            Register<DIContainer>().FromInstance(this);
         }
 
         public virtual T Instantiate<T>() {
@@ -65,6 +65,7 @@ namespace Syringe {
             return Instantiate(descriptor.ImplementationType);
         }
 
+        [Obsolete("Use Register<TImpl>() or Register<TService, TImpl>() instead", true)]
         internal void RegisterSingleton(Type serviceType, Type implementationType, object implementation)
         {
             var descriptor = new ServiceDescriptor(Instantiate(implementationType), serviceType);
@@ -77,6 +78,7 @@ namespace Syringe {
             return (TService)Resolve(type);
         }
 
+        [Obsolete("Use Register<TImpl>() or Register<TService, TImpl>() instead", true)]
         public DIContainer RegisterSingleton<TImpl>() {
             var type = typeof(TImpl);
             var descriptor = new ServiceDescriptor(Instantiate(type));
@@ -84,6 +86,7 @@ namespace Syringe {
             return this;
         }
 
+        [Obsolete("Use Register<TImpl>() or Register<TService, TImpl>() instead", true)]
         public DIContainer RegisterSingleton<TImpl>(TImpl implementation) {
             var type = typeof(TImpl);
             var descriptor = new ServiceDescriptor(implementation);
@@ -91,6 +94,7 @@ namespace Syringe {
             return this;
         }
 
+        [Obsolete("Use Register<TImpl>() or Register<TService, TImpl>() instead", true)]
         public DIContainer RegisterSingleton<TService, TImpl>() where TImpl: TService {
             var implType = typeof(TImpl);
             var serviceType = typeof(TService);
@@ -99,6 +103,7 @@ namespace Syringe {
             return this;
         }
 
+        [Obsolete("Use Register<TImpl>() or Register<TService, TImpl>() instead", true)]
         public DIContainer RegisterSingleton<TService, TImpl>(TImpl implementation) where TImpl: TService {
             var serviceType = typeof(TService);
             var descriptor = new ServiceDescriptor(implementation, serviceType);
@@ -106,6 +111,7 @@ namespace Syringe {
             return this;
         }
 
+        [Obsolete("Use Register<TImpl>() or Register<TService, TImpl>() instead", true)]
         public DIContainer RegisterTransient<TImpl>() {
             var type = typeof(TImpl);
             var descriptor = new ServiceDescriptor(type, type);
@@ -113,6 +119,7 @@ namespace Syringe {
             return this;
         }
 
+        [Obsolete("Use Register<TImpl>() or Register<TService, TImpl>() instead", true)]
         public DIContainer RegisterTransient<TService, TImpl>() where TImpl: TService {
             var implType = typeof(TImpl);
             var serviceType = typeof(TService);

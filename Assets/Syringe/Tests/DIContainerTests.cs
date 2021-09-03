@@ -44,22 +44,10 @@ public class DIContainerTests
     internal interface IBoth : IConcrete, IAbstract { }
 
     [Test]
-    public void ConcreteSingletonNoDependencyWithInitialValue() {
+    public void ResolveConcreteFromNewSingleton() {
         var container = new DIContainer();
 
-        container.RegisterSingleton(new RandomProvider());
-
-        var rnd1 = container.Resolve<RandomProvider>();
-        var rnd2 = container.Resolve<RandomProvider>();
-
-        Assert.AreEqual(rnd1.Value, rnd2.Value);
-    }
-
-    [Test]
-    public void ConcreteSingletonNoDependencyNonLazy() {
-        var container = new DIContainer();
-
-        container.RegisterSingleton<RandomProvider>();
+        container.Register<RandomProvider>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<RandomProvider>();
         var rnd2 = container.Resolve<RandomProvider>();
@@ -68,10 +56,10 @@ public class DIContainerTests
     }
     
     [Test]
-    public void AbstractSingletonNoDependency() {
+    public void ResolveAbstractFromNewSingleton() {
         var container = new DIContainer();
 
-        container.RegisterSingleton<IProvider, RandomProvider>();
+        container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<IProvider>();
         var rnd2 = container.Resolve<IProvider>();
@@ -80,10 +68,23 @@ public class DIContainerTests
     }
 
     [Test]
-    public void AbstractSingletonNoDependencyWithInitialValue() {
+    public void ResolveConcreteFromInstance() {
         var container = new DIContainer();
 
-        container.RegisterSingleton<IProvider, RandomProvider>(new RandomProvider());
+        container.Register<RandomProvider>().FromInstance(new RandomProvider());
+
+        var rnd1 = container.Resolve<RandomProvider>();
+        var rnd2 = container.Resolve<RandomProvider>();
+
+        Assert.AreEqual(rnd1.Value, rnd2.Value);
+        Assert.AreEqual(rnd1, rnd2);
+    }
+
+    [Test]
+    public void ResolveAbstractFromInstance() {
+        var container = new DIContainer();
+
+        container.Register<IProvider, RandomProvider>().FromInstance(new RandomProvider());
 
         var rnd1 = container.Resolve<IProvider>();
         var rnd2 = container.Resolve<IProvider>();
@@ -92,10 +93,10 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ConcreteTransientNoDependency() {
+    public void ResolveConcreteFromNewTransient() {
         var container = new DIContainer();
 
-        container.RegisterTransient<RandomProvider>();
+        container.Register<RandomProvider>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<RandomProvider>();
         var rnd2 = container.Resolve<RandomProvider>();
@@ -104,10 +105,10 @@ public class DIContainerTests
     }
 
     [Test]
-    public void AbstractTransientNoDependency() {
+    public void ResolveAbstractFromNewTransient() {
         var container = new DIContainer();
 
-        container.RegisterTransient<IProvider, RandomProvider>();
+        container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<IProvider>();
         var rnd2 = container.Resolve<IProvider>();
@@ -116,11 +117,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void SingletonConcreteSingletonDependency() {
+    public void ResolveConcreteFromNewSingletonForFromNewSingleton() {
         var container = new DIContainer();
 
-        container.RegisterSingleton<RandomProvider>();
-        container.RegisterSingleton<ConcreteDependencyService>();
+        container.Register<RandomProvider>().FromNew().AsSingleton();
+        container.Register<ConcreteDependencyService>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<RandomProvider>();
         var rnd2 = container.Resolve<ConcreteDependencyService>();
@@ -129,11 +130,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void SingletonAbstractSingletonDependency() {
+    public void ResolveAbstractFromNewSingletonForFromNewSingleton() {
         var container = new DIContainer();
 
-        container.RegisterSingleton<IProvider, RandomProvider>();
-        container.RegisterSingleton<AbstractDependencyService>();
+        container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
+        container.Register<AbstractDependencyService>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<IProvider>();
         var rnd2 = container.Resolve<AbstractDependencyService>();
@@ -144,11 +145,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void SingletonConcreteTransientDependency() {
+    public void ResolveConcreteFromNewTransientForFromNewSingleton() {
         var container = new DIContainer();
 
-        container.RegisterTransient<RandomProvider>();
-        container.RegisterSingleton<ConcreteDependencyService>();
+        container.Register<RandomProvider>().FromNew().AsTransient();
+        container.Register<ConcreteDependencyService>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<RandomProvider>();
         var rnd2 = container.Resolve<ConcreteDependencyService>();
@@ -159,11 +160,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void SingletonAbstractTransientDependency() {
+    public void ResolveAbstractFromNewTransientForFromNewSingleton() {
         var container = new DIContainer();
 
-        container.RegisterTransient<IProvider, RandomProvider>();
-        container.RegisterSingleton<AbstractDependencyService>();
+        container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
+        container.Register<AbstractDependencyService>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<IProvider>();
         var rnd2 = container.Resolve<AbstractDependencyService>();
@@ -172,11 +173,11 @@ public class DIContainerTests
     }
     
     [Test]
-    public void TransientConcreteSingletonDependency() {
+    public void ResolveConcreteFromNewSingletonForFromNewTransient() {
         var container = new DIContainer();
 
-        container.RegisterSingleton<RandomProvider>();
-        container.RegisterTransient<ConcreteDependencyService>();
+        container.Register<RandomProvider>().FromNew().AsSingleton();
+        container.Register<ConcreteDependencyService>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<ConcreteDependencyService>();
         var rnd2 = container.Resolve<ConcreteDependencyService>();
@@ -186,11 +187,11 @@ public class DIContainerTests
     }
     
     [Test]
-    public void TransientAbstractSingletonDependency() {
+    public void ResolveAbstractFromNewSingletonForFromNewTransient() {
         var container = new DIContainer();
 
-        container.RegisterSingleton<IProvider, RandomProvider>();
-        container.RegisterTransient<AbstractDependencyService>();
+        container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
+        container.Register<AbstractDependencyService>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<AbstractDependencyService>();
         var rnd2 = container.Resolve<AbstractDependencyService>();
@@ -200,11 +201,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void TransientConcreteTransientDependency() {
+    public void ResolveConcreteFromNewTransientForFromNewTransient() {
         var container = new DIContainer();
 
-        container.RegisterTransient<RandomProvider>();
-        container.RegisterTransient<ConcreteDependencyService>();
+        container.Register<RandomProvider>().FromNew().AsTransient();
+        container.Register<ConcreteDependencyService>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<ConcreteDependencyService>();
         var rnd2 = container.Resolve<ConcreteDependencyService>();
@@ -214,11 +215,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void TransientAbstractTransientDependency() {
+    public void ResolveAbstractFromNewTransientForFromNewTransient() {
         var container = new DIContainer();
 
-        container.RegisterTransient<IProvider, RandomProvider>();
-        container.RegisterTransient<AbstractDependencyService>();
+        container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
+        container.Register<AbstractDependencyService>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<AbstractDependencyService>();
         var rnd2 = container.Resolve<AbstractDependencyService>();
@@ -228,11 +229,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteSingletonFromParentContainerWithInitialValue() {
+    public void ResolveConcreteFromInstanceFromParentContainer() {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
-        parent.RegisterSingleton(new RandomProvider());
+        parent.Register<RandomProvider>().FromInstance(new RandomProvider());
 
         var rnd1 = parent.Resolve<RandomProvider>();
         var rnd2 = container.Resolve<RandomProvider>();
@@ -241,11 +242,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteSingletonFromParentContainerNonLazy() {
+    public void ResolveConcreteFromNewSingletonFromParentContainer() {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
-        parent.RegisterSingleton<RandomProvider>();
+        parent.Register<RandomProvider>().FromNew().AsSingleton();
 
         var rnd1 = parent.Resolve<RandomProvider>();
         var rnd2 = container.Resolve<RandomProvider>();
@@ -254,11 +255,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractSingletonFromParentContainerNonLazy() {
+    public void ResolveAbstractFromNewSingletonFromParentContainer() {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
-        parent.RegisterSingleton<IProvider, RandomProvider>();
+        parent.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
 
         var rnd1 = parent.Resolve<IProvider>();
         var rnd2 = container.Resolve<IProvider>();
@@ -267,11 +268,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractSingletonFromParentContainerWithInitialValue() {
+    public void ResolveAbstractFromInstanceFromParentContainer() {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
-        parent.RegisterSingleton<IProvider, RandomProvider>(new RandomProvider());
+        parent.Register<IProvider, RandomProvider>().FromInstance(new RandomProvider());
 
         var rnd1 = parent.Resolve<IProvider>();
         var rnd2 = container.Resolve<IProvider>();
@@ -280,11 +281,11 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteTransientFromParentContainerNonLazy() {
+    public void ResolveConcreteFromNewTransientFromParentContainer() {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
-        parent.RegisterTransient<RandomProvider>();
+        parent.Register<RandomProvider>().FromNew().AsTransient();
 
         var rnd1 = parent.Resolve<RandomProvider>();
         var rnd2 = container.Resolve<RandomProvider>();
@@ -293,86 +294,15 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractTransientFromParentContainerNonLazy() {
+    public void ResolveAbstractFromNewTransientFromParentContainer() {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
-        parent.RegisterTransient<IProvider, RandomProvider>();
+        parent.Register<IProvider, RandomProvider>().FromNew().AsTransient();
 
         var rnd1 = parent.Resolve<IProvider>();
         var rnd2 = container.Resolve<IProvider>();
 
         Assert.AreNotEqual(rnd1.Value, rnd2.Value);
-    }
-
-    [Test]
-    public void ResolveFromNewAsSingletonNonLazy() {
-        var container = new DIContainer();
-
-        container.Register<RandomProvider>().FromNew().AsSingleton().NonLazy();
-
-        var resolved1 = container.Resolve<RandomProvider>();
-        var resolved2 = container.Resolve<RandomProvider>();
-
-        Assert.IsNotNull(resolved1);
-        Assert.AreEqual(resolved1, resolved2);
-    }
-
-    [Test]
-    public void ResolveFromNewAsSingletonLazy() {
-        var container = new DIContainer();
-
-        container.Register<RandomProvider>().FromNew().AsSingleton().Lazy();
-
-        var resolved1 = container.Resolve<RandomProvider>();
-        var resolved2 = container.Resolve<RandomProvider>();
-
-        Assert.IsNotNull(resolved1);
-        Assert.AreEqual(resolved1, resolved2);
-    }
-
-    [Test]
-    public void ResolveFromNewAsTransientLazy() {
-        var container = new DIContainer();
-
-        container.Register<RandomProvider>().FromNew().AsTransient().Lazy();
-
-        var resolved1 = container.Resolve<RandomProvider>();
-        var resolved2 = container.Resolve<RandomProvider>();
-
-        Assert.IsNotNull(resolved1);
-        Assert.IsNotNull(resolved2);
-        Assert.AreNotEqual(resolved1, resolved2);
-    }
-
-    [Test]
-    public void ResolveFromNewAsTransientNonLazy() {
-        var container = new DIContainer();
-
-        container.Register<RandomProvider>().FromNew().AsTransient().NonLazy();
-
-        var resolved1 = container.Resolve<RandomProvider>();
-        var resolved2 = container.Resolve<RandomProvider>();
-
-        Assert.IsNotNull(resolved1);
-        Assert.AreEqual(resolved1, resolved2);
-    }
-
-    [Test]
-    public void ResolveFromInstance() {
-        var container = new DIContainer();
-
-        container.RegisterSingleton<RandomFactory>();
-
-        var factory = container.Resolve<RandomFactory>();
-        var guid = Guid.NewGuid();
-        var instance = factory.Create();
-
-        container.Register<RandomProvider>().FromInstance(instance);
-
-        var resolved = container.Resolve<RandomProvider>();
-
-        Assert.AreEqual(instance.Value, resolved.Value);
-        Assert.AreEqual(instance, resolved);
     }
 }
