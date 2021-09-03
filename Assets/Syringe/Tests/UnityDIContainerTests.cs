@@ -272,4 +272,139 @@ public class UnityDIContainerTests
 
         Assert.AreNotEqual(rnd1.Value, rnd2.Value);
     }
+
+    [Test]
+    public void ResolveConcreteFromPrefabSingleton() {
+        var container = new UnityDIContainer();
+
+        container.RegisterComponent<NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsSingleton();
+
+        var resolved1 = container.Resolve<NoDependencyComponent>();
+        var resolved2 = container.Resolve<NoDependencyComponent>();
+
+        Assert.IsNotNull(resolved1);
+        Assert.AreEqual(resolved1, resolved2);
+    }
+
+    [Test]
+    public void ResolveConcreteFromPrefabTransient() {
+        var container = new UnityDIContainer();
+
+        container.RegisterComponent<NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsTransient();
+
+        var resolved1 = container.Resolve<NoDependencyComponent>();
+        var resolved2 = container.Resolve<NoDependencyComponent>();
+
+        Assert.IsNotNull(resolved1);
+        Assert.IsNotNull(resolved2);
+        Assert.AreNotEqual(resolved1, resolved2);
+    }
+
+    [Test]
+    public void ResolveAbstractFromPrefabSingleton() {
+        var container = new UnityDIContainer();
+
+        container.RegisterComponent<INoDepComponent, NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsSingleton();
+
+        var resolved1 = container.Resolve<INoDepComponent>();
+        var resolved2 = container.Resolve<INoDepComponent>();
+
+        Assert.IsNotNull(resolved1);
+        Assert.AreEqual(resolved1, resolved2);
+    }
+
+    [Test]
+    public void ResolveAbstractFromPrefabTransient() {
+        var container = new UnityDIContainer();
+
+        container.RegisterComponent<INoDepComponent, NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsTransient();
+
+        var resolved1 = container.Resolve<INoDepComponent>();
+        var resolved2 = container.Resolve<INoDepComponent>();
+
+        Assert.IsNotNull(resolved1);
+        Assert.IsNotNull(resolved2);
+        Assert.AreNotEqual(resolved1, resolved2);
+    }
+
+    [Test]
+    public void ResolveDependenciesFromPrefabInAllComponents() {
+        var container = new UnityDIContainer();
+
+        container.RegisterComponent<NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsSingleton();
+        container.RegisterComponent<ConcreteDependencyComponent>().FromPrefab(Resources.Load<ConcreteDependencyComponent>("concrete")).AsSingleton();
+        container.RegisterComponent<AbstractDependencyComponent>().FromPrefab(Resources.Load<AbstractDependencyComponent>("abstract")).AsSingleton();
+
+        var none = container.Resolve<NoDependencyComponent>();
+        var concrete = container.Resolve<ConcreteDependencyComponent>();
+        var _abstract = container.Resolve<AbstractDependencyComponent>();
+
+        Assert.IsNotNull(none);
+        Assert.IsNotNull(concrete);
+        Assert.IsNotNull(_abstract);
+        Assert.AreEqual(none, concrete.Concrete);
+        Assert.AreEqual(none, _abstract.Abstract);
+
+        container = new UnityDIContainer();
+
+        container.RegisterComponent<NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsTransient();
+        container.RegisterComponent<ConcreteDependencyComponent>().FromPrefab(Resources.Load<ConcreteDependencyComponent>("concrete")).AsSingleton();
+        container.RegisterComponent<AbstractDependencyComponent>().FromPrefab(Resources.Load<AbstractDependencyComponent>("abstract")).AsSingleton();
+
+        none = container.Resolve<NoDependencyComponent>();
+        concrete = container.Resolve<ConcreteDependencyComponent>();
+        _abstract = container.Resolve<AbstractDependencyComponent>();
+
+        Assert.IsNotNull(none);
+        Assert.IsNotNull(concrete);
+        Assert.IsNotNull(_abstract);
+        Assert.AreNotEqual(none, concrete.Concrete);
+        Assert.AreNotEqual(none, _abstract.Abstract);
+        Assert.AreNotEqual(concrete.Concrete, _abstract.Abstract);
+
+        container = new UnityDIContainer();
+
+        container.RegisterComponent<NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsSingleton();
+        container.RegisterComponent<ConcreteDependencyComponent>().FromPrefab(Resources.Load<ConcreteDependencyComponent>("concrete")).AsTransient();
+        container.RegisterComponent<AbstractDependencyComponent>().FromPrefab(Resources.Load<AbstractDependencyComponent>("abstract")).AsTransient();
+
+        none = container.Resolve<NoDependencyComponent>();
+        concrete = container.Resolve<ConcreteDependencyComponent>();
+        var concrete2 = container.Resolve<ConcreteDependencyComponent>();
+        _abstract = container.Resolve<AbstractDependencyComponent>();
+        var _abstract2 = container.Resolve<AbstractDependencyComponent>();
+
+        Assert.IsNotNull(none);
+        Assert.IsNotNull(concrete);
+        Assert.IsNotNull(_abstract);
+        Assert.AreEqual(none, concrete.Concrete);
+        Assert.AreEqual(none, _abstract.Abstract);
+        Assert.AreEqual(concrete2.Concrete, concrete.Concrete);
+        Assert.AreEqual(_abstract2.Abstract, _abstract.Abstract);
+        Assert.AreNotEqual(concrete2, concrete);
+        Assert.AreNotEqual(_abstract2, _abstract);
+
+        container = new UnityDIContainer();
+
+        container.RegisterComponent<NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsTransient();
+        container.RegisterComponent<ConcreteDependencyComponent>().FromPrefab(Resources.Load<ConcreteDependencyComponent>("concrete")).AsTransient();
+        container.RegisterComponent<AbstractDependencyComponent>().FromPrefab(Resources.Load<AbstractDependencyComponent>("abstract")).AsTransient();
+
+        none = container.Resolve<NoDependencyComponent>();
+        concrete = container.Resolve<ConcreteDependencyComponent>();
+        concrete2 = container.Resolve<ConcreteDependencyComponent>();
+        _abstract = container.Resolve<AbstractDependencyComponent>();
+        _abstract2 = container.Resolve<AbstractDependencyComponent>();
+
+        Assert.IsNotNull(none);
+        Assert.IsNotNull(concrete);
+        Assert.IsNotNull(_abstract);
+        Assert.AreNotEqual(none, concrete.Concrete);
+        Assert.AreNotEqual(none, _abstract.Abstract);
+        Assert.AreNotEqual(concrete.Concrete, _abstract.Abstract);
+        Assert.AreNotEqual(concrete2.Concrete, concrete.Concrete);
+        Assert.AreNotEqual(_abstract2.Abstract, _abstract.Abstract);
+        Assert.AreNotEqual(concrete2, concrete);
+        Assert.AreNotEqual(_abstract2, _abstract);
+    }
 }

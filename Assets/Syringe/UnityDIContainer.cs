@@ -57,11 +57,22 @@ namespace Syringe {
                 };
                 return this;
             }
+
+            public ILifetimeSelectionStage FromPrefab(TImpl prefab) {
+                var type = typeof(TImpl);
+                Descriptor.GetInstance = () => {
+                    var go = GameObject.Instantiate(prefab.gameObject);
+                    go.GetComponents<Component>().ToList().ForEach(Container.Inject);
+                    return go.GetComponent<TImpl>();
+                };
+                return this;
+            }
         }
 
         public interface IUnitySourceSelection<TImpl> : ISourceSelectionStage<TImpl>
         {
             ILifetimeSelectionStage FromNewComponent();
+            ILifetimeSelectionStage FromPrefab(TImpl prefab);
         }
     }
 }
