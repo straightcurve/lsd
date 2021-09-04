@@ -4,15 +4,14 @@ using System;
 namespace LSD {
     public class Registration<TService, TImpl> : ISourceSelectionStage<TImpl>, ILifetimeSelectionStage, IInitializationSelectionStage
     {
-        internal DIContainer Container { get; }
+        internal ISyringe Syringe { get; }
         internal ServiceLifetime Lifetime { get; set; }
         internal TImpl Instance { get; private set; }
         internal ServiceDescriptor Descriptor { get; }
 
-        public Registration(DIContainer container) {
-            Container = container;
+        public Registration(ISyringe syringe) {
+            Syringe = syringe;
             Descriptor = new ServiceDescriptor();
-            Container.collection.Add(typeof(TService), Descriptor);
         }
 
         public ILifetimeSelectionStage FromNew()
@@ -20,7 +19,7 @@ namespace LSD {
             Descriptor.GetInstance = () => {
                 var instance = Activator.CreateInstance<TImpl>();
 
-                Container.Inject(instance);
+                Syringe.Inject(instance);
 
                 return instance;
             };

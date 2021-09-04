@@ -9,30 +9,15 @@ namespace LSD {
 
         internal readonly Dictionary<Type, ServiceDescriptor> collection = new Dictionary<Type, ServiceDescriptor>();
         internal DIContainer parent;
+        protected ISyringe syringe;
 
         public DIContainer(): this(null) {}
         public DIContainer(DIContainer _parent) {
             this.parent = _parent;
+            syringe = new Syringe(this);
 
             Register<DIContainer>().FromInstance(this);
-        }
-
-        internal virtual void Inject(object instance) {
-            var type = instance.GetType();
-            var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(f => f.GetCustomAttributes(typeof(DependencyAttribute), false).Length > 0)
-                .ToList();
-
-            var derivedType = type.BaseType;
-            while (derivedType != null) {
-                derivedType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                    .Where(f => f.GetCustomAttributes(typeof(DependencyAttribute), false).Length > 0)
-                    .ToList().ForEach(f => fields.Add(f));
-                derivedType = derivedType.BaseType;
-            }
-
-            foreach (var field in fields)
-                field.SetValue(instance, Resolve(field.FieldType));
+            Register<ISyringe>().FromInstance(syringe);
         }
 
         public virtual T Instantiate<T>() {
@@ -62,12 +47,14 @@ namespace LSD {
 
         public ISourceSelectionStage<TImpl> Register<TImpl>()
         {
-            return new Registration<TImpl, TImpl>(this);
+            return Register<TImpl, TImpl>();
         }
 
         public ISourceSelectionStage<TImpl> Register<TService, TImpl>()
         {
-            return new Registration<TService, TImpl>(this);
+            var reg = new Registration<TService, TImpl>(syringe);
+            collection.Add(typeof(TService), reg.Descriptor);
+            return reg;
         }
 
         public object Resolve(Type type) {
@@ -86,7 +73,7 @@ namespace LSD {
                 if (descriptor.GetInstance != null)
                     return descriptor.GetInstance();
             } catch (Exception ex) {
-                Debug.LogError($"{type} | {descriptor.ImplementationType} | {descriptor.Implementation.GetType()}");
+                Debug.LogError($"Failed to resolve dependencies for {type}");
                 throw ex;
             }
 

@@ -6,10 +6,8 @@ using UnityEngine;
 namespace LSD {
     public class UnityDIContainer : DIContainer {
 
-        public UnityDIContainer(): this(null) {}
-        public UnityDIContainer(DIContainer _parent) {
-            this.parent = _parent;
-        }
+        public UnityDIContainer(): base(null) {}
+        public UnityDIContainer(DIContainer _parent) : base(_parent) {}
 
         public override T Instantiate<T>() {
             return (T)Instantiate(typeof(T));
@@ -37,22 +35,26 @@ namespace LSD {
 
         public IUnitySourceSelection<TImpl> RegisterComponent<TImpl>() where TImpl : MonoBehaviour
         {
-            return new UnityRegistration<TImpl, TImpl>(this);
+            return RegisterComponent<TImpl, TImpl>();
         }
 
         public IUnitySourceSelection<TImpl> RegisterComponent<TService, TImpl>() where TImpl : MonoBehaviour
         {
-            return new UnityRegistration<TService, TImpl>(this);
+            var reg = new UnityRegistration<TService, TImpl>(syringe);
+            collection.Add(typeof(TService), reg.Descriptor);
+            return reg;
         }
 
         public class UnityRegistration<TService, TImpl> : Registration<TService, TImpl>, IUnitySourceSelection<TImpl> where TImpl: MonoBehaviour {
-            public UnityRegistration(UnityDIContainer container): base(container) {}
+            public UnityRegistration(ISyringe syringe) : base(syringe)
+            {
+            }
 
             public ILifetimeSelectionStage FromNewComponent() {
                 var type = typeof(TImpl);
                 Descriptor.GetInstance = () => {
                     var instance = new GameObject().AddComponent(type);
-                    Container.Inject(instance);
+                    Syringe.Inject(instance);
                     return instance;
                 };
                 return this;
@@ -62,7 +64,7 @@ namespace LSD {
                 var type = typeof(TImpl);
                 Descriptor.GetInstance = () => {
                     var go = GameObject.Instantiate(prefab.gameObject);
-                    go.GetComponents<Component>().ToList().ForEach(Container.Inject);
+                    go.GetComponents<Component>().ToList().ForEach((c) => Syringe.Inject(c));
                     return go.GetComponent<TImpl>();
                 };
                 return this;
