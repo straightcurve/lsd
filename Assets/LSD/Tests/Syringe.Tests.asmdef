@@ -1,10 +1,10 @@
 {
-    "name": "Syringe.Tests",
+    "name": "LSD.Tests",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Syringe"
+        "LSD"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

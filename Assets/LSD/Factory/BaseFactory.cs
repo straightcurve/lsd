@@ -1,4 +1,4 @@
-namespace Syringe
+namespace LSD
 {
     public class BaseFactory<T> : IFactory<T>
     {

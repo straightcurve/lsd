@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using Syringe;
+using LSD;
 using System;
 
 public class UnityDIContainerTests

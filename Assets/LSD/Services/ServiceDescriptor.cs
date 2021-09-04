@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Syringe {
+namespace LSD {
     internal class ServiceDescriptor {
 
         public ServiceLifetime Lifetime { get; }

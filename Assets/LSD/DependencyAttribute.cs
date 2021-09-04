@@ -1,6 +1,6 @@
 using System;
 
-namespace Syringe {
+namespace LSD {
     [AttributeUsage(AttributeTargets.Field)]
     public class DependencyAttribute : Attribute {
 

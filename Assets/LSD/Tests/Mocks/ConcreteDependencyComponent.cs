@@ -1,4 +1,4 @@
-﻿using Syringe;
+﻿using LSD;
 using UnityEngine;
 
 public class ConcreteDependencyComponent : MonoBehaviour, IConcreteDepComponent {

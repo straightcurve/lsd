@@ -1,7 +1,7 @@
 using System;
 using NUnit.Framework;
 using UnityEngine.TestTools;
-using Syringe;
+using LSD;
 
 public class DIContainerTests
 {

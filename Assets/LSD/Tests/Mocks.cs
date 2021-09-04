@@ -1,5 +1,5 @@
 using System;
-using Syringe;
+using LSD;
 using UnityEngine;
 
 internal class NoDependencyFactory : BaseFactory<NoDependencyMono> {

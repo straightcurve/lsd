@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using Syringe;
+using LSD;
 
 public class AbstractDependencyComponent : MonoBehaviour, IAbstractDepComponent {
     [Dependency]

@@ -1,4 +1,4 @@
-namespace Syringe {
+namespace LSD {
     public interface ISourceSelectionStage<TImpl>
     {
         ILifetimeSelectionStage FromNew();

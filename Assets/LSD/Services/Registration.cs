@@ -1,7 +1,7 @@
 
 using System;
 
-namespace Syringe {
+namespace LSD {
     public class Registration<TService, TImpl> : ISourceSelectionStage<TImpl>, ILifetimeSelectionStage, IInitializationSelectionStage
     {
         internal DIContainer Container { get; }

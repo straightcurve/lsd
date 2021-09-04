@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace Syringe {
+namespace LSD {
     public class UnityDIContainer : DIContainer {
 
         public UnityDIContainer(): this(null) {}
