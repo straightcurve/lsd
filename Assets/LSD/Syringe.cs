@@ -11,7 +11,8 @@ namespace LSD
             Container = container;
         }
 
-        public virtual void Inject(object instance, Dictionary<string, object> overrides = null) {
+        public void Inject(object instance, IEnumerable<Override> overrides = null)
+        {
             var type = instance.GetType();
             var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                 .Where(f => f.GetCustomAttributes(typeof(DependencyAttribute), false).Length > 0)
@@ -25,15 +26,45 @@ namespace LSD
                 derivedType = derivedType.BaseType;
             }
 
-            if (overrides == null)
+            if (overrides == null || !overrides.Any(o => o.targetType == type))
                 foreach (var field in fields)
                     field.SetValue(instance, Container.Resolve(field.FieldType));
             else 
                 foreach (var field in fields) {
-                    if (!overrides.ContainsKey(field.Name))
+                    var _override = overrides.First(o => o.dependencyType == field.FieldType);
+                    if (_override == null)
                         return;
 
+                    field.SetValue(instance, _override.dependency);
+                }
+        }
+
+        public void InjectRecursively(object instance, IEnumerable<Override> overrides = null)
+        {
+            var type = instance.GetType();
+            var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(f => f.GetCustomAttributes(typeof(DependencyAttribute), false).Length > 0)
+                .ToList();
+
+            var derivedType = type.BaseType;
+            while (derivedType != null) {
+                derivedType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(f => f.GetCustomAttributes(typeof(DependencyAttribute), false).Length > 0)
+                    .ToList().ForEach(f => fields.Add(f));
+                derivedType = derivedType.BaseType;
+            }
+
+            if (overrides == null || !overrides.Any(o => o.targetType == type))
+                foreach (var field in fields)
                     field.SetValue(instance, Container.Resolve(field.FieldType));
+            else 
+                foreach (var field in fields) {
+                    var _override = overrides.First(o => o.dependencyType == field.FieldType);
+                    if (_override == null)
+                        return;
+
+                    field.SetValue(instance, _override.dependency);
+                    InjectRecursively(_override.dependency, overrides);
                 }
         }
     }

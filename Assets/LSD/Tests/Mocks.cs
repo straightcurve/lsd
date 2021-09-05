@@ -1,6 +1,27 @@
 using System;
 using LSD;
+using LSD.Builder;
 using UnityEngine;
+
+internal class Address {
+    [Dependency]
+    private string street;
+    public string Street => street;
+}
+
+internal class User {
+    [Dependency]
+    private string name;
+    public string Name => name;
+
+    [Dependency]
+    private Address address;
+    public Address Address => address;
+
+    internal class Builder : Builder<User> {
+    
+    }
+}
 
 internal class NoDependencyFactory : BaseFactory<NoDependencyMono> {
 
