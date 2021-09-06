@@ -11,11 +11,6 @@ namespace LSD.Builder
         protected readonly List<Override> overrides = new List<Override>();
         protected ICreationalStrategy strategy;
 
-        public Builder()
-        {
-            New();
-        }
-
         public IBuilder<TImpl> Override<TDependency, TIn>(TDependency dependency)
         {
             overrides.Add(new Override { targetType = typeof(TIn), dependencyType = typeof(TDependency), dependency = dependency });

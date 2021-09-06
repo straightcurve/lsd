@@ -16,7 +16,7 @@ public class BuilderTests
 
         var builder = container.Resolve<IBuilder<User>>();
         var user = builder
-            .FromNew()
+            .New()
             .Build();
 
         Assert.IsNotNull(user);
@@ -33,7 +33,7 @@ public class BuilderTests
 
         var builder = container.Resolve<IBuilder<User>>();
         var user = builder
-            .FromNew()
+            .New()
             .Override<string, User>("Sherlock Holmes")
             .Build();
 
@@ -51,7 +51,7 @@ public class BuilderTests
 
         var builder = container.Resolve<IBuilder<User>>();
         var user = builder
-            .FromNew();
+            .New();
 
         Assert.Throws<NullReferenceException>(() => user.Build());
 
@@ -67,7 +67,7 @@ public class BuilderTests
 
         var builder = container.Resolve<IBuilder<User>>();
         var user = builder
-            .FromNew()
+            .New()
             .Override<string, User>("Sherlock Holmes")
             .Override<Address, User>(new Address());
 
@@ -83,17 +83,17 @@ public class BuilderTests
 
         var builder = container.Resolve<IBuilder<RandomProvider>>();
         var random = builder
-            .FromNew()
+            .New()
             .Build();
 
         Assert.AreNotEqual(random, container.Resolve<RandomProvider>());
 
         Assert.AreNotEqual(
             builder
-            .FromNew()
+            .New()
             .Build(),
             builder
-            .FromNew()
+            .New()
             .Build()
         );
     }
@@ -119,7 +119,7 @@ public class BuilderTests
 
         var builder = container.Resolve<IBuilder<RandomProvider>>();
         var random = builder
-            .FromNew()
+            .New()
             .Build();
 
         var original = container.Resolve<RandomProvider>();
@@ -139,13 +139,13 @@ public class BuilderTests
 
         var builder = container.Resolve<IBuilder<User>>();
         var user1 = builder
-            .FromNew()
+            .New()
             .Override<string, User>("Sherlock Holmes")
             .Override<Address, User>(new Address())
             .Override<string, Address>("221B Baker Street")
             .Build();
         var user2 = builder
-            .FromNew()
+            .New()
             .Override<string, User>("Sherlock Jolmes")
             .Override<Address, User>(new Address())
             .Override<string, Address>("223B Baker Street")
@@ -164,13 +164,13 @@ public class BuilderTests
 
         var builder = container.Resolve<User.Builder>();
         var user1 = builder
-            .FromNew()
+            .New()
             .Override<string, User>("Sherlock Holmes")
             .Override<Address, User>(new Address())
             .Override<string, Address>("221B Baker Street")
             .Build();
         var user2 = builder
-            .FromNew()
+            .New()
             .Override<string, User>("Sherlock Jolmes")
             .Override<Address, User>(new Address())
             .Override<string, Address>("223B Baker Street")
