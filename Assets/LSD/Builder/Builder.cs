@@ -11,12 +11,6 @@ namespace LSD.Builder
         protected readonly List<Override> overrides = new List<Override>();
         protected ICreationalStrategy strategy;
 
-        public virtual IBuilder<TImpl> FromNew()
-        {
-            strategy = new ConstructorCreationalStrategy(syringe);
-            return this;
-        }
-
         public IBuilder<TImpl> Override<TDependency, TIn>(TDependency dependency)
         {
             overrides.Add(new Override { targetType = typeof(TIn), dependencyType = typeof(TDependency), dependency = dependency });
@@ -28,6 +22,20 @@ namespace LSD.Builder
             var instance = strategy.CreateRecursively<TImpl>(overrides);
             overrides.Clear();
             return instance;
+        }
+
+        public virtual IBuilder<TImpl> FromNew()
+        {
+            strategy = new ConstructorCreationalStrategy(syringe);
+            return this;
+        }
+
+        public virtual IBuilder<TImpl> Clone<TOriginal>(TOriginal instance) where TOriginal : ICloneable, TImpl
+        {
+            if (instance == null) throw new ArgumentNullException("instance");
+
+            strategy = new CloneCreationalStrategy(instance);
+            return this;
         }
     }
 }

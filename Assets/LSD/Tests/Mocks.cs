@@ -63,10 +63,15 @@ internal class BothDependencyMono : MonoBehaviour, IBoth
     public Guid ConcreteValue => concrete.Value;
 }
 
-internal class RandomProvider : IProvider
+internal class RandomProvider : IProvider, ICloneable
 {
     private readonly Guid value = Guid.NewGuid();
     public Guid Value => value;
+
+    public object Clone()
+    {
+        return this.MemberwiseClone();
+    }
 }
 
 internal interface IProvider
