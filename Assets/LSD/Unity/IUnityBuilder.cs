@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace LSD.Builder
+namespace LSD.Unity
 {
     public interface IUnityBuilder<TImpl> : IBuilder<TImpl> where TImpl : MonoBehaviour
     {

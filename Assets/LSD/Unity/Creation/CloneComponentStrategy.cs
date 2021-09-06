@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace LSD.CreationalStrategies
+namespace LSD.Unity.Creation
 {
     public class CloneComponentStrategy : ICreationalStrategy
     {

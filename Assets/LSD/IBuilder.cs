@@ -1,6 +1,6 @@
 using System;
 
-namespace LSD.Builder
+namespace LSD
 {
     public interface IBuilder<TImpl>
     {

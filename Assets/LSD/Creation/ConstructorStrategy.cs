@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace LSD.CreationalStrategies
+namespace LSD.Creation
 {
-    public class ConstructorCreationalStrategy : ICreationalStrategy
+    public class ConstructorStrategy : ICreationalStrategy
     {
         private ISyringe syringe;
 
-        public ConstructorCreationalStrategy(ISyringe syringe)
+        public ConstructorStrategy(ISyringe syringe)
         {
             this.syringe = syringe;
         }

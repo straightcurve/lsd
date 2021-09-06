@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using LSD.CreationalStrategies;
+using LSD.Creation;
 
-namespace LSD.Builder
+namespace LSD
 {
     public class Builder<TImpl> : IBuilder<TImpl>
     {
@@ -26,7 +26,7 @@ namespace LSD.Builder
 
         public virtual IBuilder<TImpl> New()
         {
-            strategy = new ConstructorCreationalStrategy(syringe);
+            strategy = new ConstructorStrategy(syringe);
             return this;
         }
 
@@ -34,7 +34,7 @@ namespace LSD.Builder
         {
             if (instance == null) throw new ArgumentNullException("instance");
 
-            strategy = new CloneCreationalStrategy(instance);
+            strategy = new CloneStrategy(instance);
             return this;
         }
     }

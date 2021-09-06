@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 
-namespace LSD.CreationalStrategies
+namespace LSD.Creation
 {
-    public class CloneCreationalStrategy : ICreationalStrategy
+    public class CloneStrategy : ICreationalStrategy
     {
         private ICloneable original;
-        public CloneCreationalStrategy(ICloneable original)
+        public CloneStrategy(ICloneable original)
         {
             this.original = original;
         }
