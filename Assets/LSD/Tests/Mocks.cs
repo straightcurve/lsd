@@ -3,13 +3,15 @@ using LSD;
 using LSD.Builder;
 using UnityEngine;
 
-internal class Address {
+internal class Address
+{
     [Dependency]
     private string street;
     public string Street => street;
 }
 
-internal class User {
+internal class User
+{
     [Dependency]
     private string name;
     public string Name => name;
@@ -18,62 +20,19 @@ internal class User {
     private Address address;
     public Address Address => address;
 
-    internal class Builder : Builder<User> {
-    
-    }
-}
-
-internal class NoDependencyFactory : BaseFactory<NoDependencyMono> {
-
-}
-
-internal interface IRandomFactory : IFactory<RandomProvider> {
-    RandomProvider Create(Guid guid);
-}
-
-internal class DependsOnConcreteComponent : MonoBehaviour {
-    [Dependency]
-    private DependsOnConcreteFactory component;
-
-    public RandomProvider Random => component.Random;
-}
-
-internal class DependsOnConcreteFactory : MonoBehaviour {
-    [Dependency]
-    private RandomFactory factory;
-
-    public RandomProvider Random => factory.Create();
-}
-
-internal class RandomFactory : BaseFactory<RandomProvider>, IRandomFactory
-{
-    public RandomProvider Create(Guid guid)
+    internal class Builder : Builder<User>
     {
-        return container.Instantiate<RandomProvider>();
+
     }
 }
 
-internal class AbstractDependencyMonoFactory : IFactory<AbstractDependencyMono>
+internal class NoDependencyMono : MonoBehaviour, INone
 {
-    [Dependency]
-    private DIContainer container;
-
-    public AbstractDependencyMono Create() => container.Instantiate<AbstractDependencyMono>();
-}
-
-internal class ConcreteDependencyMonoFactory : IFactory<ConcreteDependencyMono>
-{
-    [Dependency]
-    private DIContainer container;
-
-    public ConcreteDependencyMono Create() => container.Instantiate<ConcreteDependencyMono>();
-}
-
-internal class NoDependencyMono : MonoBehaviour, INone {
     public Guid Value { get; set; }
 }
 
-internal class ConcreteDependencyMono : MonoBehaviour, IConcrete {
+internal class ConcreteDependencyMono : MonoBehaviour, IConcrete
+{
 
     [Dependency]
     private RandomProvider concrete;
@@ -81,7 +40,8 @@ internal class ConcreteDependencyMono : MonoBehaviour, IConcrete {
     public Guid ConcreteValue => concrete.Value;
 }
 
-internal class AbstractDependencyMono : MonoBehaviour, IAbstract {
+internal class AbstractDependencyMono : MonoBehaviour, IAbstract
+{
 
     [Dependency]
     private IProvider _abstract;
@@ -89,7 +49,8 @@ internal class AbstractDependencyMono : MonoBehaviour, IAbstract {
     public Guid AbstractValue => _abstract.Value;
 }
 
-internal class BothDependencyMono : MonoBehaviour, IBoth {
+internal class BothDependencyMono : MonoBehaviour, IBoth
+{
 
     [Dependency]
     private IProvider _abstract;
@@ -102,20 +63,24 @@ internal class BothDependencyMono : MonoBehaviour, IBoth {
     public Guid ConcreteValue => concrete.Value;
 }
 
-internal class RandomProvider : IProvider {
+internal class RandomProvider : IProvider
+{
     private readonly Guid value = Guid.NewGuid();
     public Guid Value => value;
 }
 
-internal interface IProvider {
+internal interface IProvider
+{
     Guid Value { get; }
 }
 
-internal interface IConcrete {
+internal interface IConcrete
+{
     Guid ConcreteValue { get; }
 }
 
-internal interface IAbstract {
+internal interface IAbstract
+{
     Guid AbstractValue { get; }
 }
 

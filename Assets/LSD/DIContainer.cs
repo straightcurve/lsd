@@ -23,34 +23,6 @@ namespace LSD
             Register<ISyringe>().FromInstance(syringe);
         }
 
-        public virtual T Instantiate<T>()
-        {
-            return (T)Instantiate(typeof(T));
-        }
-
-        public virtual object Instantiate(Type type)
-        {
-            var instance = Activator.CreateInstance(type);
-
-            var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(f => f.GetCustomAttributes(typeof(DependencyAttribute), false).Length > 0)
-                .ToList();
-
-            var derivedType = type.BaseType;
-            while (derivedType != null)
-            {
-                derivedType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                    .Where(f => f.GetCustomAttributes(typeof(DependencyAttribute), false).Length > 0)
-                    .ToList().ForEach(f => fields.Add(f));
-                derivedType = derivedType.BaseType;
-            }
-
-            foreach (var field in fields)
-                field.SetValue(instance, Resolve(field.FieldType));
-
-            return instance;
-        }
-
         public ISourceSelectionStage<TImpl> Register<TImpl>()
         {
             return Register<TImpl, TImpl>();
@@ -103,7 +75,7 @@ namespace LSD
             if (descriptor.GetInstance != null)
                 return descriptor.GetInstance();
 
-            return Instantiate(descriptor.ImplementationType);
+            throw new NullReferenceException($"No service of type {type.ToString()}");
         }
 
         public TService Resolve<TService>()
