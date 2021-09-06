@@ -2,10 +2,12 @@ using System;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 using LSD;
+using LSD.Builder;
 
 public class DIContainerTests
 {
-    internal class ConcreteDependencyService : IConcrete {
+    internal class ConcreteDependencyService : IConcrete
+    {
 
         [Dependency]
         private RandomProvider concrete;
@@ -13,7 +15,8 @@ public class DIContainerTests
         public Guid ConcreteValue => concrete.Value;
     }
 
-    internal class AbstractDependencyService : IAbstract {
+    internal class AbstractDependencyService : IAbstract
+    {
 
         [Dependency]
         private IProvider _abstract;
@@ -21,7 +24,8 @@ public class DIContainerTests
         public Guid AbstractValue => _abstract.Value;
     }
 
-    internal class BothDependencyService : IBoth {
+    internal class BothDependencyService : IBoth
+    {
 
         [Dependency]
         private RandomProvider concrete;
@@ -33,18 +37,21 @@ public class DIContainerTests
         public Guid ConcreteValue => concrete.Value;
     }
 
-    internal interface IConcrete {
+    internal interface IConcrete
+    {
         Guid ConcreteValue { get; }
     }
 
-    internal interface IAbstract {
+    internal interface IAbstract
+    {
         Guid AbstractValue { get; }
     }
 
     internal interface IBoth : IConcrete, IAbstract { }
 
     [Test]
-    public void ResolveConcreteFromNewSingleton() {
+    public void ResolveConcreteFromNewSingleton()
+    {
         var container = new DIContainer();
 
         container.Register<RandomProvider>().FromNew().AsSingleton();
@@ -54,9 +61,10 @@ public class DIContainerTests
 
         Assert.AreEqual(rnd1.Value, rnd2.Value);
     }
-    
+
     [Test]
-    public void ResolveAbstractFromNewSingleton() {
+    public void ResolveAbstractFromNewSingleton()
+    {
         var container = new DIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
@@ -68,7 +76,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromInstance() {
+    public void ResolveConcreteFromInstance()
+    {
         var container = new DIContainer();
 
         container.Register<RandomProvider>().FromInstance(new RandomProvider());
@@ -81,7 +90,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromInstance() {
+    public void ResolveAbstractFromInstance()
+    {
         var container = new DIContainer();
 
         container.Register<IProvider, RandomProvider>().FromInstance(new RandomProvider());
@@ -93,7 +103,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewTransient() {
+    public void ResolveConcreteFromNewTransient()
+    {
         var container = new DIContainer();
 
         container.Register<RandomProvider>().FromNew().AsTransient();
@@ -105,7 +116,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewTransient() {
+    public void ResolveAbstractFromNewTransient()
+    {
         var container = new DIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
@@ -117,7 +129,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewSingletonForFromNewSingleton() {
+    public void ResolveConcreteFromNewSingletonForFromNewSingleton()
+    {
         var container = new DIContainer();
 
         container.Register<RandomProvider>().FromNew().AsSingleton();
@@ -130,7 +143,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewSingletonForFromNewSingleton() {
+    public void ResolveAbstractFromNewSingletonForFromNewSingleton()
+    {
         var container = new DIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
@@ -145,7 +159,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewTransientForFromNewSingleton() {
+    public void ResolveConcreteFromNewTransientForFromNewSingleton()
+    {
         var container = new DIContainer();
 
         container.Register<RandomProvider>().FromNew().AsTransient();
@@ -160,7 +175,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewTransientForFromNewSingleton() {
+    public void ResolveAbstractFromNewTransientForFromNewSingleton()
+    {
         var container = new DIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
@@ -171,9 +187,10 @@ public class DIContainerTests
 
         Assert.AreNotEqual(rnd1.Value, rnd2.AbstractValue);
     }
-    
+
     [Test]
-    public void ResolveConcreteFromNewSingletonForFromNewTransient() {
+    public void ResolveConcreteFromNewSingletonForFromNewTransient()
+    {
         var container = new DIContainer();
 
         container.Register<RandomProvider>().FromNew().AsSingleton();
@@ -185,9 +202,10 @@ public class DIContainerTests
         Assert.AreEqual(rnd1.ConcreteValue, rnd2.ConcreteValue);
         Assert.AreNotEqual(rnd1, rnd2);
     }
-    
+
     [Test]
-    public void ResolveAbstractFromNewSingletonForFromNewTransient() {
+    public void ResolveAbstractFromNewSingletonForFromNewTransient()
+    {
         var container = new DIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
@@ -201,7 +219,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewTransientForFromNewTransient() {
+    public void ResolveConcreteFromNewTransientForFromNewTransient()
+    {
         var container = new DIContainer();
 
         container.Register<RandomProvider>().FromNew().AsTransient();
@@ -215,7 +234,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewTransientForFromNewTransient() {
+    public void ResolveAbstractFromNewTransientForFromNewTransient()
+    {
         var container = new DIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
@@ -229,7 +249,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromInstanceFromParentContainer() {
+    public void ResolveConcreteFromInstanceFromParentContainer()
+    {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
@@ -242,7 +263,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewSingletonFromParentContainer() {
+    public void ResolveConcreteFromNewSingletonFromParentContainer()
+    {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
@@ -255,7 +277,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewSingletonFromParentContainer() {
+    public void ResolveAbstractFromNewSingletonFromParentContainer()
+    {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
@@ -268,7 +291,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromInstanceFromParentContainer() {
+    public void ResolveAbstractFromInstanceFromParentContainer()
+    {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
@@ -281,7 +305,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewTransientFromParentContainer() {
+    public void ResolveConcreteFromNewTransientFromParentContainer()
+    {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
@@ -294,7 +319,8 @@ public class DIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewTransientFromParentContainer() {
+    public void ResolveAbstractFromNewTransientFromParentContainer()
+    {
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
@@ -304,5 +330,64 @@ public class DIContainerTests
         var rnd2 = container.Resolve<IProvider>();
 
         Assert.AreNotEqual(rnd1.Value, rnd2.Value);
+    }
+
+    [Test]
+    public void ThrowsIfDependenciesCantBeResolved()
+    {
+        var container = new DIContainer();
+
+        container.Register<User>().FromNew().AsTransient();
+        Assert.Throws<NullReferenceException>(() => container.Resolve<User>());
+
+        container.Register<Address>().FromInstance(new Address());
+        Assert.Throws<NullReferenceException>(() => container.Resolve<User>());
+
+        container.Register<string>().FromInstance("Sherlock Holmes");
+        Assert.IsNotNull(container.Resolve<User>());
+    }
+
+    [Test]
+    public void ThrowsIfChildDependenciesCantBeResolved()
+    {
+        var container = new DIContainer();
+        container.Register<Address>().FromNew().AsTransient();
+        container.Register<Builder<User>>().FromNew().AsTransient();
+
+        var builder = container.Resolve<Builder<User>>();
+        builder.FromNew()
+            .Override<string, User>("Sherlock Holmes");
+
+        Assert.Throws<NullReferenceException>(() => builder.Build());
+
+        builder.Override<string, Address>("221B Baker Street");
+
+        var user = builder.Build();
+        Assert.IsNotNull(user);
+        Assert.AreEqual(user.Name, "Sherlock Holmes");
+        Assert.AreEqual(user.Address.Street, "221B Baker Street");
+    }
+
+    [Test]
+    public void ThrowsIfChildDependenciesCantBeResolvedFromParent()
+    {
+        var parent = new DIContainer();
+        var container = new DIContainer(parent);
+
+        parent.Register<Address>().FromNew().AsTransient();
+        container.Register<Builder<User>>().FromNew().AsTransient();
+
+        var builder = container.Resolve<Builder<User>>();
+        builder.FromNew()
+            .Override<string, User>("Sherlock Holmes");
+
+        Assert.Throws<NullReferenceException>(() => builder.Build());
+
+        builder.Override<string, Address>("221B Baker Street");
+
+        var user = builder.Build();
+        Assert.IsNotNull(user);
+        Assert.AreEqual(user.Name, "Sherlock Holmes");
+        Assert.AreEqual(user.Address.Street, "221B Baker Street");
     }
 }

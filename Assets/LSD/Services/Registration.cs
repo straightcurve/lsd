@@ -1,7 +1,9 @@
 
 using System;
+using System.Collections.Generic;
 
-namespace LSD {
+namespace LSD
+{
     public class Registration<TService, TImpl> : ISourceSelectionStage<TImpl>, ILifetimeSelectionStage, IInitializationSelectionStage
     {
         internal ISyringe Syringe { get; }
@@ -9,20 +11,32 @@ namespace LSD {
         internal TImpl Instance { get; private set; }
         internal ServiceDescriptor Descriptor { get; }
 
-        public Registration(ISyringe syringe) {
+        public Registration(ISyringe syringe)
+        {
             Syringe = syringe;
             Descriptor = new ServiceDescriptor();
         }
 
         public ILifetimeSelectionStage FromNew()
         {
-            Descriptor.GetInstance = () => {
+            Descriptor.GetInstance = () =>
+            {
                 var instance = Activator.CreateInstance<TImpl>();
 
                 Syringe.Inject(instance);
 
                 return instance;
             };
+
+            Descriptor.GetOverridenInstance = (IEnumerable<Override> overrides) =>
+            {
+                var instance = Activator.CreateInstance<TImpl>();
+
+                Syringe.Inject(instance, overrides);
+
+                return instance;
+            };
+
             return this;
         }
 
@@ -36,7 +50,8 @@ namespace LSD {
         {
             Lifetime = ServiceLifetime.Singleton;
             var fn = Descriptor.GetInstance;
-            Descriptor.GetInstance = () => {
+            Descriptor.GetInstance = () =>
+            {
                 if (Descriptor.Implementation == null)
                     Descriptor.Implementation = fn();
 
@@ -61,17 +76,21 @@ namespace LSD {
             Descriptor.GetInstance = GetInstance(Descriptor.GetInstance, InitializationMethod.NonLazy);
         }
 
-        internal Func<object> GetInstance(Func<object> fn, InitializationMethod method) {
-            switch (method) {
+        internal Func<object> GetInstance(Func<object> fn, InitializationMethod method)
+        {
+            switch (method)
+            {
                 case InitializationMethod.Lazy:
-                default: {
-                    return fn;
-                }
+                default:
+                    {
+                        return fn;
+                    }
 
-                case InitializationMethod.NonLazy: {
-                    var instance = fn();
-                    return () => instance;
-                }
+                case InitializationMethod.NonLazy:
+                    {
+                        var instance = fn();
+                        return () => instance;
+                    }
             }
         }
     }
