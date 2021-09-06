@@ -355,7 +355,7 @@ public class DIContainerTests
         container.Register<Builder<User>>().FromNew().AsTransient();
 
         var builder = container.Resolve<Builder<User>>();
-        builder.FromNew()
+        builder.New()
             .Override<string, User>("Sherlock Holmes");
 
         Assert.Throws<NullReferenceException>(() => builder.Build());
@@ -377,7 +377,7 @@ public class DIContainerTests
         container.Register<Builder<User>>().FromNew().AsTransient();
 
         var builder = container.Resolve<Builder<User>>();
-        builder.FromNew()
+        builder.New()
             .Override<string, User>("Sherlock Holmes");
 
         Assert.Throws<NullReferenceException>(() => builder.Build());
