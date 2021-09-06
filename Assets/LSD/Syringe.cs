@@ -31,7 +31,7 @@ namespace LSD
                     field.SetValue(instance, Container.Resolve(field.FieldType));
             else 
                 foreach (var field in fields) {
-                    var _override = overrides.First(o => o.dependencyType == field.FieldType);
+                    var _override = overrides.FirstOrDefault(o => o.dependencyType == field.FieldType);
                     if (_override == null)
                         return;
 
@@ -59,10 +59,12 @@ namespace LSD
                     field.SetValue(instance, Container.Resolve(field.FieldType));
             else 
                 foreach (var field in fields) {
-                    var _override = overrides.First(o => o.dependencyType == field.FieldType);
-                    if (_override == null)
+                    var _override = overrides.FirstOrDefault(o => o.dependencyType == field.FieldType);
+                    if (_override == null) {
+                        field.SetValue(instance, Container.Resolve(field.FieldType));
                         return;
-
+                    }
+    
                     field.SetValue(instance, _override.dependency);
                     InjectRecursively(_override.dependency, overrides);
                 }
