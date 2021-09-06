@@ -44,7 +44,7 @@ public class BuilderTests
     }
 
     [Test]
-    public void ThrowsDependenciesCantBeResolved()
+    public void ThrowsIfDependenciesCantBeResolved()
     {
         var container = new DIContainer();
         container.Register<IBuilder<User>, Builder<User>>().FromNew().AsSingleton();
@@ -128,7 +128,7 @@ public class BuilderTests
 
         var cloned = builder.Clone(original).Build();
         Assert.AreNotEqual(cloned, original);
-        Assert.AreEqual(cloned.Value, original.Value);
+        Assert.AreEqual(original.Value, cloned.Value);
     }
 
     [Test]

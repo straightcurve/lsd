@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -36,6 +37,12 @@ namespace LSD
                 {
                     var instance = new GameObject().AddComponent(type);
                     Syringe.Inject(instance);
+                    return instance;
+                };
+                Descriptor.GetOverridenInstance = (IEnumerable<Override> overrides) =>
+                {
+                    var instance = new GameObject().AddComponent(type);
+                    Syringe.Inject(instance, overrides);
                     return instance;
                 };
                 return this;

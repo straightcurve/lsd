@@ -1,9 +1,10 @@
 ﻿using LSD;
 using UnityEngine;
 
-public class ConcreteDependencyComponent : MonoBehaviour, IConcreteDepComponent {
+public class ConcreteDependencyComponent : MonoBehaviour, IConcreteDepComponent
+{
     [Dependency]
     public NoDependencyComponent Concrete;
 }
 
-public interface IConcreteDepComponent {}
+public interface IConcreteDepComponent { }
