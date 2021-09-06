@@ -374,13 +374,15 @@ public class DIContainerTests
         var parent = new DIContainer();
         var container = new DIContainer(parent);
 
-        parent.Register<Address>().FromNew().AsTransient();
         container.Register<Builder<User>>().FromNew().AsTransient();
 
         var builder = container.Resolve<Builder<User>>();
         builder.FromNew()
             .Override<string, User>("Sherlock Holmes");
 
+        Assert.Throws<NullReferenceException>(() => builder.Build());
+
+        parent.Register<Address>().FromNew().AsTransient();
         Assert.Throws<NullReferenceException>(() => builder.Build());
 
         builder.Override<string, Address>("221B Baker Street");
