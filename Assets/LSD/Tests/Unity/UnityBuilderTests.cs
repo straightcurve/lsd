@@ -14,9 +14,9 @@ public class UnityBuilderTests
         var container = new UnityDIContainer();
         container.Register<string>().FromInstance("221B Baker Street");
         container.RegisterComponent<AddressComponent>().FromNewComponent().AsTransient();
-        container.Register<IBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
+        container.Register<IUnityBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
 
-        var builder = container.Resolve<IBuilder<UserComponent>>();
+        var builder = container.Resolve<IUnityBuilder<UserComponent>>();
         var user = builder
             .New()
             .Build();
@@ -31,9 +31,9 @@ public class UnityBuilderTests
         var container = new UnityDIContainer();
         container.Register<string>().FromInstance("221B Baker Street");
         container.RegisterComponent<AddressComponent>().FromNewComponent().AsTransient();
-        container.Register<IBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
+        container.Register<IUnityBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
 
-        var builder = container.Resolve<IBuilder<UserComponent>>();
+        var builder = container.Resolve<IUnityBuilder<UserComponent>>();
         var user = builder
             .New()
             .Override<string, UserComponent>("Sherlock Holmes")
@@ -49,9 +49,9 @@ public class UnityBuilderTests
     public void ThrowsIfDependenciesCantBeResolved()
     {
         var container = new UnityDIContainer();
-        container.Register<IBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
+        container.Register<IUnityBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
 
-        var builder = container.Resolve<IBuilder<UserComponent>>();
+        var builder = container.Resolve<IUnityBuilder<UserComponent>>();
         var user = builder
             .New();
 
@@ -65,9 +65,9 @@ public class UnityBuilderTests
     public void ThrowsIfChildDependenciesCantBeResolved()
     {
         var container = new UnityDIContainer();
-        container.Register<IBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
+        container.Register<IUnityBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
 
-        var builder = container.Resolve<IBuilder<UserComponent>>();
+        var builder = container.Resolve<IUnityBuilder<UserComponent>>();
         var user = builder
             .New()
             .Override<string, UserComponent>("Sherlock Holmes")
@@ -80,9 +80,9 @@ public class UnityBuilderTests
     public void ThrowsIfOriginalInstanceIsNull()
     {
         var container = new UnityDIContainer();
-        container.Register<IBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
+        container.Register<IUnityBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
 
-        var builder = container.Resolve<IBuilder<UserComponent>>();
+        var builder = container.Resolve<IUnityBuilder<UserComponent>>();
 
         UserComponent random = null;
         Assert.Throws<ArgumentNullException>(() => builder.Clone(random).Build());
@@ -92,12 +92,12 @@ public class UnityBuilderTests
     public void ClonesInstance()
     {
         var container = new UnityDIContainer();
-        container.Register<IBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
+        container.Register<IUnityBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
         container.Register<string>().FromInstance("placeholder");
         container.RegisterComponent<AddressComponent>().FromNewComponent().AsSingleton();
         container.RegisterComponent<UserComponent>().FromNewComponent().AsSingleton();
 
-        var builder = container.Resolve<IBuilder<UserComponent>>();
+        var builder = container.Resolve<IUnityBuilder<UserComponent>>();
         var random = builder
             .New()
             .Build();
@@ -115,9 +115,9 @@ public class UnityBuilderTests
     public void CompilesAndWorks()
     {
         var container = new UnityDIContainer();
-        container.Register<IBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
+        container.Register<IUnityBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
 
-        var builder = container.Resolve<IBuilder<UserComponent>>();
+        var builder = container.Resolve<IUnityBuilder<UserComponent>>();
         var user1 = builder
             .New()
             .Override<string, UserComponent>("Sherlock Holmes")
@@ -166,10 +166,10 @@ public class UnityBuilderTests
     {
         var container = new UnityDIContainer();
         container.RegisterComponent<NoDependencyComponent>().FromNewComponent().AsSingleton();
-        container.Register<IBuilder<NoDependencyComponent>, UnityBuilder<NoDependencyComponent>>().FromNew().AsSingleton();
+        container.Register<IUnityBuilder<NoDependencyComponent>, UnityBuilder<NoDependencyComponent>>().FromNew().AsSingleton();
 
         var singleton = container.Resolve<NoDependencyComponent>();
-        var builder = container.Resolve<IBuilder<NoDependencyComponent>>();
+        var builder = container.Resolve<IUnityBuilder<NoDependencyComponent>>();
         var built = builder
             .New()
             .Build();
@@ -182,6 +182,50 @@ public class UnityBuilderTests
             .Build(),
             builder
             .New()
+            .Build()
+        );
+    }
+
+    [Test]
+    public void ThrowsIfPrefabInvalid()
+    {
+        var container = new UnityDIContainer();
+        container.RegisterComponent<NoDependencyComponent>().FromNewComponent().AsSingleton();
+        container.Register<IUnityBuilder<NoDependencyComponent>, UnityBuilder<NoDependencyComponent>>().FromNew().AsSingleton();
+
+        var singleton = container.Resolve<NoDependencyComponent>();
+        var builder = container.Resolve<IUnityBuilder<NoDependencyComponent>>();
+
+        Assert.Throws<ArgumentNullException>(() =>
+            builder.Prefab(Resources.Load<NoDependencyComponent>("path-that-doesn't-exist"))
+        );
+        Assert.Throws<InvalidOperationException>(() =>
+            builder.Prefab("path-that-doesn't-exist")
+        );
+    }
+
+    [Test]
+    public void CreatesNewGameObjectFromPrefab()
+    {
+        var container = new UnityDIContainer();
+        container.RegisterComponent<NoDependencyComponent>().FromNewComponent().AsSingleton();
+        container.Register<IUnityBuilder<NoDependencyComponent>, UnityBuilder<NoDependencyComponent>>().FromNew().AsSingleton();
+
+        var singleton = container.Resolve<NoDependencyComponent>();
+        var builder = container.Resolve<IUnityBuilder<NoDependencyComponent>>();
+        var built = builder
+            .Prefab(Resources.Load<NoDependencyComponent>("none"))
+            .Prefab("none")
+            .Build();
+
+        Assert.AreNotEqual(built, singleton);
+
+        Assert.AreNotEqual(
+            builder
+            .Prefab("none")
+            .Build(),
+            builder
+            .Prefab("none")
             .Build()
         );
     }
