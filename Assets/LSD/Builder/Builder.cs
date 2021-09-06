@@ -13,7 +13,7 @@ namespace LSD.Builder
 
         public virtual IBuilder<TImpl> FromNew()
         {
-            strategy = new ConstructorCreationalStrategy();
+            strategy = new ConstructorCreationalStrategy(syringe);
             return this;
         }
 
@@ -23,18 +23,10 @@ namespace LSD.Builder
             return this;
         }
 
-        /// <summary>
-        /// Inject overrides
-        /// </summary>
-        /// <returns></returns>
         public virtual TImpl Build()
         {
-            var instance = (TImpl)strategy.Create(typeof(TImpl));
-
-            // we need to inject recursively
-            syringe.InjectRecursively(instance, overrides);
+            var instance = strategy.CreateRecursively<TImpl>(overrides);
             overrides.Clear();
-
             return instance;
         }
     }
