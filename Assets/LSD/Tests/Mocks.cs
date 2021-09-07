@@ -12,12 +12,14 @@ internal class Address
 internal class User
 {
     [Dependency]
+    private Address address;
+    public Address Address => address;
+
+    [Dependency]
     private string name;
     public string Name => name;
 
-    [Dependency]
-    private Address address;
-    public Address Address => address;
+
 
     internal class Builder : Builder<User>
     {
