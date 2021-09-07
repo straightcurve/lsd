@@ -105,7 +105,7 @@ It's because we don't rely on the client derived class anymore.
 Say you wanted to build a house. You would hire someone to do it and you would expect them to come with their own tools, right?
 Well.. our first implementation meant that they would ask you for tools instead and all they could do is build.
 
-Unless we decided to go dirty and have the clients pass in the instance of the ```TBuilder``` they created through a set method, they would instead had to implement the ```With()``` and ```In()``` methods themselves in every derived class.
+Unless we decided to go dirty and have the clients pass in the instance of the ```TBuilder``` they created through a set method, they would have instead had to implement the ```With()``` and ```In()``` methods themselves in every derived class.
 
 ![Yikes](../assets/yikes.gif)
 
