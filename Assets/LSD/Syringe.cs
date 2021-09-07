@@ -68,7 +68,7 @@ namespace LSD
                     if (_override == null)
                     {
                         field.SetValue(instance, Container.Resolve(field.FieldType, overrides));
-                        return;
+                        continue;
                     }
 
                     field.SetValue(instance, _override.dependency);

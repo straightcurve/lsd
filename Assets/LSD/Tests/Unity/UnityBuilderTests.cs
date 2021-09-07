@@ -186,6 +186,24 @@ public class UnityBuilderTests
     }
 
     [Test]
+    public void InjectsDependenciesInNewComponent()
+    {
+        var container = new UnityDIContainer();
+        container.Register<IUnityBuilder<EnemyComponent>, UnityBuilder<EnemyComponent>>().FromNew().AsSingleton();
+
+        var builder = container.Resolve<IUnityBuilder<EnemyComponent>>();
+        var id = Guid.NewGuid();
+        var built = builder
+            .New()
+            .Override<EnemyData, EnemyComponent>(Resources.Load<EnemyData>("Data/grunt"))
+            .Override<Guid, EnemyComponent>(id)
+            .Build();
+
+        Assert.AreEqual(id, built.Id);
+        Assert.IsNotNull(built.Data);
+    }
+
+    [Test]
     public void ThrowsIfPrefabInvalid()
     {
         var container = new UnityDIContainer();
@@ -227,5 +245,50 @@ public class UnityBuilderTests
             .Prefab("none")
             .Build()
         );
+    }
+
+    [Test]
+    public void InjectsDependenciesInComponentWhenPrefab()
+    {
+        var container = new UnityDIContainer();
+        container.Register<IUnityBuilder<EnemyComponent>, UnityBuilder<EnemyComponent>>().FromNew().AsSingleton();
+
+        var builder = container.Resolve<IUnityBuilder<EnemyComponent>>();
+        var id = Guid.NewGuid();
+        var built = builder
+            .Prefab(Resources.Load<EnemyComponent>("enemy"))
+            .Override<EnemyData, EnemyComponent>(Resources.Load<EnemyData>("Data/grunt"))
+            .Override<Guid, EnemyComponent>(id)
+            .Build();
+
+        Assert.AreEqual(id, built.Id);
+        Assert.IsNotNull(built.Data);
+    }
+
+    [Test]
+    public void InjectsDependenciesInAllComponentsOnGameObjectWhenPrefab()
+    {
+        var container = new UnityDIContainer();
+        container.Register<IUnityBuilder<EnemyComponent>, UnityBuilder<EnemyComponent>>().FromNew().AsSingleton();
+        container.Register<string>().FromInstance("221B Baker Street");
+        container.RegisterComponent<AddressComponent>().FromNewComponent().AsSingleton();
+
+        var builder = container.Resolve<IUnityBuilder<EnemyComponent>>();
+        var id = Guid.NewGuid();
+        var built = builder
+            .Prefab(Resources.Load<EnemyComponent>("userEnemy"))
+            .Override<EnemyData, EnemyComponent>(Resources.Load<EnemyData>("Data/grunt"))
+            .Override<Guid, EnemyComponent>(id)
+            .Override<string, UserComponent>("Sherlock Holmes")
+            .Build();
+
+        Assert.AreEqual(id, built.Id);
+        Assert.IsNotNull(built.Data);
+
+        var user = built.GetComponent<UserComponent>();
+        Assert.IsNotNull(user);
+        Assert.IsNotNull(user.Address);
+        Assert.AreEqual("Sherlock Holmes", user.Name);
+        Assert.AreEqual("221B Baker Street", user.Address.Street);
     }
 }

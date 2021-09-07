@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LSD.Unity.Creation
@@ -31,8 +32,8 @@ namespace LSD.Unity.Creation
             if (!type.IsSubclassOf(typeof(MonoBehaviour)))
                 throw new InvalidOperationException($"{type} is not a MonoBehaviour!");
 
-            var instance = GameObject.Instantiate(prefab);
-            syringe.Inject(instance, overrides);
+            var instance = GameObject.Instantiate(prefab).GetComponent(type);
+            instance.GetComponents<Component>().ToList().ForEach((c) => syringe.Inject(c, overrides));
             return instance;
         }
 
@@ -46,14 +47,14 @@ namespace LSD.Unity.Creation
             if (!type.IsSubclassOf(typeof(MonoBehaviour)))
                 throw new InvalidOperationException($"{type} is not a MonoBehaviour!");
 
-            var instance = GameObject.Instantiate(prefab);
-            syringe.InjectRecursively(instance, overrides);
+            var instance = GameObject.Instantiate(prefab).GetComponent(type);
+            instance.GetComponents<MonoBehaviour>().ToList().ForEach((c) => syringe.InjectRecursively(c, overrides));
             return instance;
         }
 
         public TImpl CreateRecursively<TImpl>(IEnumerable<Override> overrides = null)
         {
-            return ((GameObject)CreateRecursively(typeof(TImpl), overrides)).GetComponent<TImpl>();
+            return ((TImpl)CreateRecursively(typeof(TImpl), overrides));
         }
     }
 }
