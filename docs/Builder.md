@@ -3,8 +3,6 @@
 Mocks:
 
 ```csharp
-using LSD;
-
 class Address {
     [Dependency]
     private string street;
@@ -25,8 +23,6 @@ class User {
 Creating a builder (**MUST** be added to a container):
 
 ```csharp
-using LSD;
-
 var container = new DIContainer();
 container.Register<Builder<User>>().FromNew().AsSingleton();
 ```
