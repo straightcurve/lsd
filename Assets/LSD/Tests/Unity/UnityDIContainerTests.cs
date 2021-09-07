@@ -1,13 +1,13 @@
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using LSD;
-using System;
+using LSD.Unity;
 
 public class UnityDIContainerTests
 {
     [Test]
-    public void ResolveConcreteFromNewComponentSingleton() {
+    public void ResolveConcreteFromNewComponentSingleton()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<NoDependencyMono>().FromNewComponent().AsSingleton();
@@ -17,9 +17,10 @@ public class UnityDIContainerTests
 
         Assert.AreEqual(rnd1.Value, rnd2.Value);
     }
-    
+
     [Test]
-    public void ResolveAbstractFromNewComponentSingleton() {
+    public void ResolveAbstractFromNewComponentSingleton()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<INone, NoDependencyMono>().FromNewComponent().AsSingleton();
@@ -31,7 +32,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromInstance() {
+    public void ResolveConcreteFromInstance()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<NoDependencyMono>().FromInstance(new GameObject().AddComponent<NoDependencyMono>());
@@ -44,7 +46,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromInstance() {
+    public void ResolveAbstractFromInstance()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<INone, NoDependencyMono>().FromInstance(new GameObject().AddComponent<NoDependencyMono>());
@@ -56,7 +59,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewComponentTransient() {
+    public void ResolveConcreteFromNewComponentTransient()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<NoDependencyMono>().FromNewComponent().AsTransient();
@@ -68,7 +72,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewComponentTransient() {
+    public void ResolveAbstractFromNewComponentTransient()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<INone, NoDependencyMono>().FromNewComponent().AsTransient();
@@ -80,7 +85,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewSingletonForFromNewComponentSingleton() {
+    public void ResolveConcreteFromNewSingletonForFromNewComponentSingleton()
+    {
         var container = new UnityDIContainer();
 
         container.Register<RandomProvider>().FromNew().AsSingleton();
@@ -93,7 +99,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewSingletonForFromNewComponentSingleton() {
+    public void ResolveAbstractFromNewSingletonForFromNewComponentSingleton()
+    {
         var container = new UnityDIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
@@ -108,7 +115,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewTransientForFromNewComponentSingleton() {
+    public void ResolveConcreteFromNewTransientForFromNewComponentSingleton()
+    {
         var container = new UnityDIContainer();
 
         container.Register<RandomProvider>().FromNew().AsTransient();
@@ -123,7 +131,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewTransientForFromNewComponentSingleton() {
+    public void ResolveAbstractFromNewTransientForFromNewComponentSingleton()
+    {
         var container = new UnityDIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
@@ -134,9 +143,10 @@ public class UnityDIContainerTests
 
         Assert.AreNotEqual(rnd1.Value, rnd2.AbstractValue);
     }
-    
+
     [Test]
-    public void ResolveConcreteFromNewSingletonForFromNewComponentTransient() {
+    public void ResolveConcreteFromNewSingletonForFromNewComponentTransient()
+    {
         var container = new UnityDIContainer();
 
         container.Register<RandomProvider>().FromNew().AsSingleton();
@@ -148,9 +158,10 @@ public class UnityDIContainerTests
         Assert.AreEqual(rnd1.ConcreteValue, rnd2.ConcreteValue);
         Assert.AreNotEqual(rnd1, rnd2);
     }
-    
+
     [Test]
-    public void ResolveAbstractFromNewSingletonForFromNewComponentTransient() {
+    public void ResolveAbstractFromNewSingletonForFromNewComponentTransient()
+    {
         var container = new UnityDIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
@@ -164,7 +175,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewTransientForFromNewComponentTransient() {
+    public void ResolveConcreteFromNewTransientForFromNewComponentTransient()
+    {
         var container = new UnityDIContainer();
 
         container.Register<RandomProvider>().FromNew().AsTransient();
@@ -178,7 +190,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewTransientForFromNewComponentTransient() {
+    public void ResolveAbstractFromNewTransientForFromNewComponentTransient()
+    {
         var container = new UnityDIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
@@ -192,7 +205,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromInstanceFromParentContainer() {
+    public void ResolveConcreteFromInstanceFromParentContainer()
+    {
         var parent = new UnityDIContainer();
         var container = new UnityDIContainer(parent);
 
@@ -209,7 +223,8 @@ public class UnityDIContainerTests
     /// </summary>
 
     [Test]
-    public void ResolveConcreteFromNewComponentSingletonFromParentContainer() {
+    public void ResolveConcreteFromNewComponentSingletonFromParentContainer()
+    {
         var parent = new UnityDIContainer();
         var container = new UnityDIContainer(parent);
 
@@ -222,7 +237,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewComponentSingletonFromParentContainer() {
+    public void ResolveAbstractFromNewComponentSingletonFromParentContainer()
+    {
         var parent = new UnityDIContainer();
         var container = new UnityDIContainer(parent);
 
@@ -235,7 +251,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromInstanceFromParentContainer() {
+    public void ResolveAbstractFromInstanceFromParentContainer()
+    {
         var parent = new UnityDIContainer();
         var container = new UnityDIContainer(parent);
 
@@ -248,7 +265,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromNewComponentTransientFromParentContainer() {
+    public void ResolveConcreteFromNewComponentTransientFromParentContainer()
+    {
         var parent = new UnityDIContainer();
         var container = new UnityDIContainer(parent);
 
@@ -261,7 +279,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromNewComponentTransientFromParentContainer() {
+    public void ResolveAbstractFromNewComponentTransientFromParentContainer()
+    {
         var parent = new UnityDIContainer();
         var container = new UnityDIContainer(parent);
 
@@ -274,7 +293,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromPrefabSingleton() {
+    public void ResolveConcreteFromPrefabSingleton()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsSingleton();
@@ -287,7 +307,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveConcreteFromPrefabTransient() {
+    public void ResolveConcreteFromPrefabTransient()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsTransient();
@@ -301,7 +322,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromPrefabSingleton() {
+    public void ResolveAbstractFromPrefabSingleton()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<INoDepComponent, NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsSingleton();
@@ -314,7 +336,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveAbstractFromPrefabTransient() {
+    public void ResolveAbstractFromPrefabTransient()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<INoDepComponent, NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsTransient();
@@ -328,7 +351,8 @@ public class UnityDIContainerTests
     }
 
     [Test]
-    public void ResolveDependenciesFromPrefabInAllComponents() {
+    public void ResolveDependenciesFromPrefabInAllComponents()
+    {
         var container = new UnityDIContainer();
 
         container.RegisterComponent<NoDependencyComponent>().FromPrefab(Resources.Load<NoDependencyComponent>("none")).AsSingleton();

@@ -1,16 +1,21 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace LSD {
-    internal class ServiceDescriptor {
+namespace LSD
+{
+    internal class ServiceDescriptor
+    {
 
         public ServiceLifetime Lifetime { get; }
         public object Implementation { get; internal set; }
         public Type ServiceType { get; }
         public Type ImplementationType { get; }
         public Func<object> GetInstance { get; internal set; }
+        public Func<IEnumerable<Override>, object> GetOverridenInstance { get; internal set; }
 
-        public ServiceDescriptor(object impl, Type serviceType = null) {
+        public ServiceDescriptor(object impl, Type serviceType = null)
+        {
             ImplementationType = ServiceType = impl.GetType();
             if (serviceType != null)
                 ServiceType = serviceType;
@@ -19,14 +24,16 @@ namespace LSD {
             Lifetime = ServiceLifetime.Singleton;
         }
 
-        public ServiceDescriptor(Type serviceType, Type implementationType) {
+        public ServiceDescriptor(Type serviceType, Type implementationType)
+        {
             ServiceType = serviceType;
             ImplementationType = implementationType;
             Implementation = null;
             Lifetime = ServiceLifetime.Transient;
         }
 
-        public ServiceDescriptor() {
+        public ServiceDescriptor()
+        {
 
         }
     }
