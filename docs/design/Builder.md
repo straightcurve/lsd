@@ -72,7 +72,7 @@ So let's consider this abstraction:
 ```csharp
 public interface IBuilder<TImpl> {
     TImpl Build();
-    IBuilder<TImpl> FromNew();
+    IBuilder<TImpl> New();
     IBuilder<TImpl> Override<TDependency, TIn>(TDependency dependency);
 }
 ```
