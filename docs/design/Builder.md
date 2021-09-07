@@ -44,26 +44,30 @@ public void SomeMethodSomewhere() {
 ```
 
 We can implement `With<TDependency>(TDependency value)`, but unfortunately, this approach doesn't work.
-`In<TBuilder>()` is supposed to return the type of builder the user creates, however that wouldn't be possible since we need the instance which we can't get (in a clean way).
+`TBuilder In<TIn>(string name)` is supposed to return the type of builder the user creates, however that wouldn't be possible since we need the instance which we can't get (in a clean way).
 
 ```csharp
 public abstract class Builder<TImpl, TBuilder> : IBuilder<TImpl, TBuilder> {
 
-    public virtual TBuilder FromNew() {
-        TImpl instance = ...;
+    public virtual TBuilder In<TIn>(string name) {
+        // do stuff..
 
-        // can't compile cause
-        // we don't have the instance of the type
+        // doesn't compile, Builder is not of type TBuilder
+        // note that we can't add a generic class constraint
+        // like `where TBuilder : Builder<?>`; for hopefully
+        // obvious reasons
+        return (TBuilder)this;
+
         return toSearchingForACleanSolution;
     }
 
-    // ... other methods have the similar but the same underlying problem...
+    // ... other methods have the same problem...
 }
 ```
 
 On to the next one.
 
-Consider this abstraction:
+So let's consider this abstraction:
 
 ```csharp
 public interface IBuilder<TImpl> {
@@ -80,7 +84,7 @@ public void SomeMethodSomewhereElse() {
     var builder = new Builder<User>();
     for (int i = 1; i < 10; i++) {
         builder
-            .FromNew()
+            .New()
             .Override<string, User>($"Sherlock {'G' + i}olmes")
             .Override<Address, User>(new Address())
             .Override<string, Address>($"22{i}B Baker Street")
@@ -97,9 +101,11 @@ However as you can see, **we can now easily override child dependencies.**
 
 Combining the ```With()``` and ```In()``` methods seems to have fixed the issue we had earlier, but why?
 It's because we don't rely on the client derived class anymore.
-The previous implementation forced the client to derive from our ```Builder``` class and pass in its type so we would know which type we had to return.
-Not only that, but unless we decided to go dirty and have the clients pass in the instance of the ```Builder``` they created through a set method, they would instead had to implement the ```With()``` and ```In()``` methods themselves in every derived class.
-Basically the ```Builder``` was not actually a builder, it was an instantiator and.. that's about it.
+
+Say you wanted to build a house. You would hire someone to do it and you would expect them to come with their own tools, right?
+Well.. our first implementation meant that they would ask you for tools instead and all they could do is build.
+
+Unless we decided to go dirty and have the clients pass in the instance of the ```TBuilder``` they created through a set method, they would instead had to implement the ```With()``` and ```In()``` methods themselves in every derived class.
 
 ![Yikes](../assets/yikes.gif)
 
