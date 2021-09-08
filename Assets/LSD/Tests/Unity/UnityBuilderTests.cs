@@ -12,7 +12,7 @@ public class UnityBuilderTests
     {
         var container = new UnityDIContainer();
         container.Register<string>().FromInstance("221B Baker Street");
-        container.RegisterComponent<AddressComponent>().FromNewComponent().AsTransient();
+        container.RegisterComponent<AddressComponent>().FromNew().AsTransient();
         container.Register<IUnityBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
 
         var builder = container.Resolve<IUnityBuilder<UserComponent>>();
@@ -29,7 +29,7 @@ public class UnityBuilderTests
     {
         var container = new UnityDIContainer();
         container.Register<string>().FromInstance("221B Baker Street");
-        container.RegisterComponent<AddressComponent>().FromNewComponent().AsTransient();
+        container.RegisterComponent<AddressComponent>().FromNew().AsTransient();
         container.Register<IUnityBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
 
         var builder = container.Resolve<IUnityBuilder<UserComponent>>();
@@ -93,8 +93,8 @@ public class UnityBuilderTests
         var container = new UnityDIContainer();
         container.Register<IUnityBuilder<UserComponent>, UnityBuilder<UserComponent>>().FromNew().AsSingleton();
         container.Register<string>().FromInstance("placeholder");
-        container.RegisterComponent<AddressComponent>().FromNewComponent().AsSingleton();
-        container.RegisterComponent<UserComponent>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<AddressComponent>().FromNew().AsSingleton();
+        container.RegisterComponent<UserComponent>().FromNew().AsSingleton();
 
         var builder = container.Resolve<IUnityBuilder<UserComponent>>();
         var random = builder
@@ -164,7 +164,7 @@ public class UnityBuilderTests
     public void CreatesNewComponent()
     {
         var container = new UnityDIContainer();
-        container.RegisterComponent<NoDependencyComponent>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<NoDependencyComponent>().FromNew().AsSingleton();
         container.Register<IUnityBuilder<NoDependencyComponent>, UnityBuilder<NoDependencyComponent>>().FromNew().AsSingleton();
 
         var singleton = container.Resolve<NoDependencyComponent>();
@@ -207,7 +207,7 @@ public class UnityBuilderTests
     public void ThrowsIfPrefabInvalid()
     {
         var container = new UnityDIContainer();
-        container.RegisterComponent<NoDependencyComponent>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<NoDependencyComponent>().FromNew().AsSingleton();
         container.Register<IUnityBuilder<NoDependencyComponent>, UnityBuilder<NoDependencyComponent>>().FromNew().AsSingleton();
 
         var singleton = container.Resolve<NoDependencyComponent>();
@@ -225,7 +225,7 @@ public class UnityBuilderTests
     public void CreatesNewGameObjectFromPrefab()
     {
         var container = new UnityDIContainer();
-        container.RegisterComponent<NoDependencyComponent>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<NoDependencyComponent>().FromNew().AsSingleton();
         container.Register<IUnityBuilder<NoDependencyComponent>, UnityBuilder<NoDependencyComponent>>().FromNew().AsSingleton();
 
         var singleton = container.Resolve<NoDependencyComponent>();
@@ -271,7 +271,7 @@ public class UnityBuilderTests
         var container = new UnityDIContainer();
         container.Register<IUnityBuilder<EnemyComponent>, UnityBuilder<EnemyComponent>>().FromNew().AsSingleton();
         container.Register<string>().FromInstance("221B Baker Street");
-        container.RegisterComponent<AddressComponent>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<AddressComponent>().FromNew().AsSingleton();
 
         var builder = container.Resolve<IUnityBuilder<EnemyComponent>>();
         var id = Guid.NewGuid();

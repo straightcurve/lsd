@@ -10,7 +10,7 @@ public class UnityDIContainerTests
     {
         var container = new UnityDIContainer();
 
-        container.RegisterComponent<NoDependencyMono>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<NoDependencyMono>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<NoDependencyMono>();
         var rnd2 = container.Resolve<NoDependencyMono>();
@@ -23,7 +23,7 @@ public class UnityDIContainerTests
     {
         var container = new UnityDIContainer();
 
-        container.RegisterComponent<INone, NoDependencyMono>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<INone, NoDependencyMono>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<INone>();
         var rnd2 = container.Resolve<INone>();
@@ -63,7 +63,7 @@ public class UnityDIContainerTests
     {
         var container = new UnityDIContainer();
 
-        container.RegisterComponent<NoDependencyMono>().FromNewComponent().AsTransient();
+        container.RegisterComponent<NoDependencyMono>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<NoDependencyMono>();
         var rnd2 = container.Resolve<NoDependencyMono>();
@@ -76,7 +76,7 @@ public class UnityDIContainerTests
     {
         var container = new UnityDIContainer();
 
-        container.RegisterComponent<INone, NoDependencyMono>().FromNewComponent().AsTransient();
+        container.RegisterComponent<INone, NoDependencyMono>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<INone>();
         var rnd2 = container.Resolve<INone>();
@@ -90,7 +90,7 @@ public class UnityDIContainerTests
         var container = new UnityDIContainer();
 
         container.Register<RandomProvider>().FromNew().AsSingleton();
-        container.RegisterComponent<ConcreteDependencyMono>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<ConcreteDependencyMono>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<RandomProvider>();
         var rnd2 = container.Resolve<ConcreteDependencyMono>();
@@ -104,7 +104,7 @@ public class UnityDIContainerTests
         var container = new UnityDIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
-        container.RegisterComponent<AbstractDependencyMono>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<AbstractDependencyMono>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<IProvider>();
         var rnd2 = container.Resolve<AbstractDependencyMono>();
@@ -120,7 +120,7 @@ public class UnityDIContainerTests
         var container = new UnityDIContainer();
 
         container.Register<RandomProvider>().FromNew().AsTransient();
-        container.RegisterComponent<ConcreteDependencyMono>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<ConcreteDependencyMono>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<RandomProvider>();
         var rnd2 = container.Resolve<ConcreteDependencyMono>();
@@ -136,7 +136,7 @@ public class UnityDIContainerTests
         var container = new UnityDIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
-        container.RegisterComponent<AbstractDependencyMono>().FromNewComponent().AsSingleton();
+        container.RegisterComponent<AbstractDependencyMono>().FromNew().AsSingleton();
 
         var rnd1 = container.Resolve<IProvider>();
         var rnd2 = container.Resolve<AbstractDependencyMono>();
@@ -150,7 +150,7 @@ public class UnityDIContainerTests
         var container = new UnityDIContainer();
 
         container.Register<RandomProvider>().FromNew().AsSingleton();
-        container.RegisterComponent<ConcreteDependencyMono>().FromNewComponent().AsTransient();
+        container.RegisterComponent<ConcreteDependencyMono>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<ConcreteDependencyMono>();
         var rnd2 = container.Resolve<ConcreteDependencyMono>();
@@ -165,7 +165,7 @@ public class UnityDIContainerTests
         var container = new UnityDIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsSingleton();
-        container.RegisterComponent<AbstractDependencyMono>().FromNewComponent().AsTransient();
+        container.RegisterComponent<AbstractDependencyMono>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<AbstractDependencyMono>();
         var rnd2 = container.Resolve<AbstractDependencyMono>();
@@ -180,7 +180,7 @@ public class UnityDIContainerTests
         var container = new UnityDIContainer();
 
         container.Register<RandomProvider>().FromNew().AsTransient();
-        container.RegisterComponent<ConcreteDependencyMono>().FromNewComponent().AsTransient();
+        container.RegisterComponent<ConcreteDependencyMono>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<ConcreteDependencyMono>();
         var rnd2 = container.Resolve<ConcreteDependencyMono>();
@@ -195,7 +195,7 @@ public class UnityDIContainerTests
         var container = new UnityDIContainer();
 
         container.Register<IProvider, RandomProvider>().FromNew().AsTransient();
-        container.RegisterComponent<AbstractDependencyMono>().FromNewComponent().AsTransient();
+        container.RegisterComponent<AbstractDependencyMono>().FromNew().AsTransient();
 
         var rnd1 = container.Resolve<AbstractDependencyMono>();
         var rnd2 = container.Resolve<AbstractDependencyMono>();
