@@ -17,6 +17,8 @@ namespace LSD
         {
             Syringe = syringe;
             Descriptor = new ServiceDescriptor();
+            FromNew();
+            AsTransient();
         }
 
         public ILifetimeSelectionStage FromNew()

@@ -391,4 +391,17 @@ public class DIContainerTests
         Assert.AreEqual(user.Name, "Sherlock Holmes");
         Assert.AreEqual(user.Address.Street, "221B Baker Street");
     }
+
+    [Test]
+    public void ResolveFromNewAsTransientByDefault()
+    {
+        var container = new DIContainer();
+
+        container.Register<RandomProvider>();
+
+        var resolved1 = container.Resolve<RandomProvider>();
+        var resolved2 = container.Resolve<RandomProvider>();
+
+        Assert.AreNotEqual(resolved1, resolved2);
+    }
 }

@@ -431,4 +431,17 @@ public class UnityDIContainerTests
         Assert.AreNotEqual(concrete2, concrete);
         Assert.AreNotEqual(_abstract2, _abstract);
     }
+
+    [Test]
+    public void ResolveFromNewAsTransientByDefault()
+    {
+        var container = new UnityDIContainer();
+
+        container.RegisterComponent<NoDependencyComponent>();
+
+        var resolved1 = container.Resolve<NoDependencyComponent>();
+        var resolved2 = container.Resolve<NoDependencyComponent>();
+
+        Assert.AreNotEqual(resolved1, resolved2);
+    }
 }

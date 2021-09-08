@@ -16,6 +16,8 @@ namespace LSD.Unity
     {
         public UnityRegistration(ISyringe syringe) : base(syringe)
         {
+            FromNew();
+            AsTransient();
         }
 
         public new ILifetimeSelectionStage FromNew()
