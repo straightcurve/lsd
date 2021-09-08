@@ -21,10 +21,11 @@ namespace LSD
 
         public ILifetimeSelectionStage FromNew()
         {
+            var type = typeof(TImpl);
             strategy = new ConstructorStrategy(Syringe);
 
-            Descriptor.GetInstance = () => strategy.Create(typeof(TImpl));
-            Descriptor.GetOverridenInstance = (IEnumerable<Override> overrides) => strategy.Create(typeof(TImpl), overrides);
+            Descriptor.GetInstance = () => strategy.Create(type);
+            Descriptor.GetOverridenInstance = (IEnumerable<Override> overrides) => strategy.Create(type, overrides);
 
             return this;
         }
