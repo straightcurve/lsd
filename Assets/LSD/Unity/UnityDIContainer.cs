@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using LSD.Unity.Creation;
 using UnityEngine;
 
 namespace LSD.Unity
@@ -28,39 +30,37 @@ namespace LSD.Unity
             {
             }
 
-            public ILifetimeSelectionStage FromNewComponent()
+            public new ILifetimeSelectionStage FromNew()
             {
                 var type = typeof(TImpl);
-                Descriptor.GetInstance = () =>
-                {
-                    var instance = new GameObject().AddComponent(type);
-                    Syringe.Inject(instance);
-                    return instance;
-                };
-                Descriptor.GetOverridenInstance = (IEnumerable<Override> overrides) =>
-                {
-                    var instance = new GameObject().AddComponent(type);
-                    Syringe.Inject(instance, overrides);
-                    return instance;
-                };
+                if (!type.IsSubclassOf(typeof(MonoBehaviour)))
+                    return base.FromNew();
+
+                strategy = new ComponentStrategy(Syringe);
+
+                Descriptor.GetInstance = () => strategy.Create(type);
+                Descriptor.GetOverridenInstance = (IEnumerable<Override> overrides) => strategy.Create(type, overrides);
+
                 return this;
+            }
+
+            public ILifetimeSelectionStage FromNewComponent()
+            {
+                return FromNew();
             }
 
             public ILifetimeSelectionStage FromPrefab(TImpl prefab)
             {
                 var type = typeof(TImpl);
-                Descriptor.GetInstance = () =>
-                {
-                    var go = GameObject.Instantiate(prefab.gameObject);
-                    go.GetComponents<Component>().ToList().ForEach((c) => Syringe.Inject(c));
-                    return go.GetComponent<TImpl>();
-                };
+                strategy = new PrefabStrategy(Syringe, prefab);
+                Descriptor.GetInstance = () => strategy.Create(type);
                 return this;
             }
         }
 
         public interface IUnitySourceSelection<TImpl> : ISourceSelectionStage<TImpl>
         {
+            [Obsolete("Use FromNew() instead")]
             ILifetimeSelectionStage FromNewComponent();
             ILifetimeSelectionStage FromPrefab(TImpl prefab);
         }
